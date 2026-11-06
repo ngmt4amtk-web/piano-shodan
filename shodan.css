@@ -1,0 +1,285 @@
+:root {
+  color-scheme: light;
+  --ink: #202839;
+  --muted: #566173;
+  --line: #dce1e9;
+  --accent: #3158b7;
+  --bg: #fff;
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; padding-bottom: calc(48px + env(safe-area-inset-bottom)); background: #fff; }
+#app { min-height: calc(100svh - 48px); }
+button, input, select { font: inherit; }
+button, select { min-height: 44px; }
+button { border-radius: 8px; box-shadow: none; }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible {
+  outline: 3px solid #3158b7;
+  outline-offset: 3px;
+}
+button:disabled { cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.selected { background: #eaf0ff; border-color: var(--accent); color: #203e88; }
+button.quiet { background: transparent; }
+h1, h2, p { overflow-wrap: anywhere; }
+a { color: #244a9d; }
+.sh-header {
+  max-width: 1040px;
+  min-height: 64px;
+  margin: auto;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.sh-brand { font-size: 1.125rem; font-weight: 650; }
+.small-brand { font-size: .875rem; color: var(--muted); }
+.sh-main { max-width: 880px; padding: 32px 24px; margin: 0 auto; }
+.sh-main h1 { font-size: 1.625rem; line-height: 1.4; margin: 0 0 8px; letter-spacing: .02em; }
+h1[tabindex="-1"]:focus { outline: none; }
+.sh-main p { margin: 8px 0 16px; }
+.sh-intro, .drill-sub { color: var(--muted); }
+.sh-list { margin: 24px 0 16px; border-top: 1px solid var(--line); }
+.sh-row {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 12px 4px;
+  text-align: left;
+}
+.sh-row:hover { background: #f5f7fb; }
+.sh-row strong { font-size: 1rem; font-weight: 600; }
+.sh-row .sh-index { width: 32px; flex-shrink: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sh-row > strong { flex: 1; }
+.sh-row small { display: block; color: var(--muted); font-size: .875rem; margin-top: 4px; }
+.sh-progress { white-space: nowrap; font-size: .8125rem; color: #236345; }
+.sh-foot { font-size: .875rem; color: var(--muted); }
+.sh-tools, .sh-secondary { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.sh-drill { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px 24px; }
+.sh-drill-options { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.sh-field { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0; min-width: 0; }
+.sh-field > span { color: var(--muted); font-size: .875rem; }
+.sh-field select { max-width: 100%; padding: 6px 8px; }
+.sh-field select { min-width: 0; }
+.sh-choices { display: flex; gap: 4px; flex-wrap: wrap; }
+.sh-choices button { padding: 6px 12px; min-width: 44px; }
+.sh-drill-start { display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+.sh-drill-start .sh-field { display: block; }
+.sh-drill-start select { display: block; width: 100%; margin-top: 4px; }
+.sh-check { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: .875rem; }
+.sh-check input { width: 22px; height: 22px; flex-shrink: 0; }
+.sh-hint { font-size: .875rem; color: var(--muted); }
+.sh-drill-start .sh-hint { margin: 0; }
+.sh-start { width: 100%; min-height: 48px; font-weight: 650; }
+.sh-score-wrap { background: white; border-block: 1px solid var(--line); min-width: 0; display: grid; align-items: center; padding: 16px 0; }
+#drill-score { min-width: 0; width: 100%; }
+.drill-svg { display: block; width: 100%; height: auto; max-height: 260px; }
+.sh-song-link { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: .875rem; }
+.sh-performance { display: flex; flex-direction: column; gap: 12px; }
+.sh-playing-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .875rem; }
+.sh-performance .sh-score-wrap { flex: 1; min-height: 140px; }
+.sh-performance .drill-svg { max-height: 240px; height: 220px; }
+#drill-status { min-height: 2.5em; padding: 8px 12px; background: #f5f7fb; border-left: 3px solid #aab7ca; margin: 0; }
+#drill-status[data-kind="wrong"] { color: #9b2727; background: #fff0f0; border-color: #b73535; }
+#drill-status[data-kind="correct"], #drill-status[data-kind="done"] { color: #175d37; background: #edf7ef; border-color: #167143; }
+#drill-status[data-kind="count"] { font-size: 1.5rem; text-align: center; }
+.sh-transport, .sh-teacher { display: flex; flex-wrap: wrap; gap: 8px; }
+.sh-transport > button, .sh-teacher > button { flex: 1; }
+.sh-teacher { border-top: 1px solid var(--line); padding-top: 12px; }
+.sh-done-note { width: 100%; color: #175d37; }
+.sh-performance > .sh-hint { margin: 0; }
+.sh-keyboard .keyboard { margin: 0; }
+.sh-keyboard .key.white { height: 100px; padding: 0 0 4px; min-width: 0; }
+.sh-keyboard .key.black { height: 60px; }
+.sh-keyboard .keyboard { max-width: 100%; }
+.sh-keyboard .octave { min-width: 0; }
+.key.white small { margin-left: 2px; color: #536173; }
+.sh-key-range { display: flex; gap: 8px; }
+.sh-key-range button { flex: 1; }
+.sh-clock {
+  position: fixed;
+  inset: auto 0 0;
+  min-height: 48px;
+  padding: 0 max(16px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #f5f7fb;
+  border-top: 1px solid var(--line);
+  z-index: 30;
+  font-size: .8125rem;
+}
+.sh-clock strong { font-variant-numeric: tabular-nums; }
+.sh-clock button { padding: 4px 12px; background: transparent; border: 0; }
+.sh-pity { font-size: 1.125rem; }
+.sh-pity strong { font-size: 2rem; color: #203e88; }
+.sh-gacha-result { margin: 16px 0; min-height: 120px; border-block: 1px solid var(--line); padding: 16px 0; }
+.sh-rarity { display: block; font-size: 1.5rem; color: #3158b7; font-weight: 700; }
+.sh-gacha-result h2 { font-size: 1.25rem; }
+.sh-rates { display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 24px; color: var(--muted); font-size: .875rem; }
+.sh-settings-rates { display: flex; flex-wrap: wrap; gap: 12px; }
+.sh-settings-rates label { width: 100px; }
+.sh-settings-rates input { width: 100%; }
+#gacha-settings-error { color: #9b2727; }
+#toast { bottom: calc(60px + env(safe-area-inset-bottom)); }
+dialog { max-height: calc(100svh - 32px); overflow-y: auto; }
+.settings input, .settings select { max-width: 100%; min-width: 0; }
+.settings label, .settings section, .order-row { min-width: 0; }
+.topbar { background: #fff; }
+.practice { background: #fff; }
+.music-svg { max-width: 100%; }
+
+@media (max-width: 640px) {
+  .sh-header { min-height: 56px; padding: 4px 16px; }
+  .sh-main { padding: 20px 16px; }
+  .sh-main h1 { font-size: 1.375rem; }
+  .sh-main .sh-intro { font-size: .875rem; }
+  .sh-list { margin-top: 16px; }
+  .sh-row { min-height: 52px; padding: 8px 2px; gap: 12px; }
+  .sh-drill { display: flex; flex-direction: column; gap: 12px; }
+  .sh-drill-options { flex-direction: column; flex-wrap: nowrap; gap: 8px; }
+  .sh-drill-options .sh-field { width: 100%; max-width: 100%; }
+  .sh-field > span { min-width: 76px; }
+  .sh-field { flex-wrap: wrap; }
+  .sh-field .sh-choices { flex: 1; min-width: 0; max-width: 100%; }
+  .sh-choices { gap: 4px; }
+  .sh-choices button { padding: 4px 8px; font-size: .875rem; }
+  .sh-drill-start { gap: 8px; }
+  .sh-drill-start .sh-field { display: flex; }
+  .sh-drill-start select { margin: 0; width: calc(100% - 84px); font-size: .875rem; }
+  .drill-sub { font-size: .875rem; }
+  .sh-score-wrap { padding: 8px 0; }
+  .drill-svg { max-height: 170px; min-height: 95px; }
+  .sh-performance .drill-svg { height: 170px; }
+  .sh-transport button { font-size: .8125rem; padding: 6px; }
+  .sh-keyboard .keyboard { flex-direction: column; gap: 4px; }
+  .sh-keyboard .key.white { height: 84px; }
+  .sh-keyboard .key.black { height: 48px; min-width: 24px; }
+}
+
+@media (max-height: 500px) and (min-width: 641px) {
+  .sh-header { min-height: 44px; padding: 0 16px; }
+  .sh-main { padding: 8px 20px; }
+  .sh-main h1 { font-size: 1.125rem; margin: 0 0 4px; }
+  .drill-sub { font-size: .8125rem; margin: 0 0 8px !important; }
+  .sh-drill { gap: 8px 16px; grid-template-columns: minmax(0, 1fr) 240px; }
+  .sh-drill-options { gap: 4px 12px; }
+  .sh-drill-options .sh-field { gap: 4px; }
+  .sh-field > span { font-size: .75rem; }
+  .sh-field select, .sh-choices button { font-size: .8125rem; }
+  .sh-choices button { padding: 4px 8px; }
+  .sh-drill-options select { max-width: 200px; }
+  .sh-drill .drill-svg { max-height: 130px; }
+  .sh-drill-start { gap: 4px; }
+  .sh-drill-start .sh-field { display: none; }
+  .sh-performance { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 8px 16px; }
+  .sh-playing-head { grid-column: 1 / -1; }
+  .sh-performance .sh-score-wrap { grid-row: 2 / 5; min-height: 110px; }
+  .sh-performance .drill-svg { height: 140px; }
+  #drill-status { grid-column: 2; font-size: .875rem; min-height: 48px; }
+  .sh-transport { grid-column: 2; gap: 4px; }
+  .sh-teacher { grid-column: 2; padding-top: 8px; gap: 4px; }
+  .sh-performance > .sh-hint { grid-column: 1 / -1; font-size: .75rem; }
+  .sh-keyboard { grid-column: 1; grid-row: 5; }
+  .sh-key-range { grid-column: 1; grid-row: 6; }
+  .sh-keyboard .key.white { height: 72px; }
+  .sh-keyboard .key.black { height: 44px; }
+  .sh-song-link, .sh-secondary { margin-top: 16px; }
+  body[data-screen="piece"] .topbar { min-height: 44px; padding: 0 16px; }
+  body[data-screen="piece"] .topbar .eyebrow { display: none; }
+  body[data-screen="piece"] .topbar h1 { font-size: 1rem; }
+  body[data-screen="piece"] .practice { padding: 8px 16px; }
+  body[data-screen="piece"] .practice-grid { grid-template-columns: minmax(0, 1fr) 220px; gap: 12px; }
+  body[data-screen="piece"] .practice-options { gap: 4px; }
+  body[data-screen="piece"] .stage-buttons { gap: 4px; }
+  body[data-screen="piece"] .stage { padding: 2px 6px; font-size: .75rem; min-height: 44px; }
+  body[data-screen="piece"] .stage .star { display: none; }
+  body[data-screen="piece"] .score-scroll { max-height: 145px; }
+  body[data-screen="piece"] .practice-controls { gap: 6px; padding: 0; }
+  body[data-screen="piece"] .play-status { min-height: 32px; font-size: .8125rem; padding: 4px; }
+  body[data-screen="piece"] .secondary-tools { display: flex; gap: 4px; }
+  body[data-screen="piece"] .secondary-tools button { padding: 4px 6px; font-size: .75rem; }
+  body[data-screen="piece"] .practice-hint { font-size: .75rem; }
+}
+
+@media (max-width: 350px) {
+  .sh-field > span { min-width: 66px; font-size: .8125rem; }
+  .sh-choices button { padding: 4px 6px; }
+  .sh-field { gap: 4px; }
+  .sh-drill-start select { width: calc(100% - 70px); }
+  .sh-row strong { font-size: .9375rem; }
+  .sh-main h1 { font-size: 1.25rem; }
+  .sh-performance { gap: 8px; }
+  .sh-performance .drill-svg { height: 130px; }
+  .sh-performance .sh-score-wrap { min-height: 100px; }
+}
+
+@media (max-width: 650px) and (max-height: 650px) {
+  body[data-screen="piece"] { padding-bottom: 132px; }
+  body[data-screen="piece"] #action-slot {
+    position: fixed;
+    bottom: calc(48px + env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    z-index: 25;
+    background: #fff;
+    padding: 8px 12px;
+    border-top: 1px solid var(--line);
+  }
+  body[data-screen="piece"] #action-slot .play-button {
+    min-height: 52px;
+    font-size: 1rem;
+  }
+  body[data-screen="piece"] #action-slot .feedback {
+    grid-template-columns: 1fr 1fr;
+  }
+  body[data-screen="piece"] #action-slot .feedback button {
+    min-height: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+.sh-reward { min-height: 56px; font-size: 1.25rem; }
+@media (orientation: portrait) {
+  .drill-svg.sh-wrapped-score,
+  .sh-performance .drill-svg.sh-wrapped-score {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  body[data-screen="gacha"] .sh-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    column-gap: 24px;
+    padding-block: 4px;
+  }
+  body[data-screen="gacha"] h1 { grid-column: 1 / -1; }
+  body[data-screen="gacha"] .sh-intro { margin: 0; }
+  body[data-screen="gacha"] .sh-pity { grid-column: 1; margin: 0; font-size: 1rem; }
+  .sh-gacha-choice { grid-column: 1; min-width: 0; }
+  .sh-gacha-result { min-height: 64px; margin: 4px 0; padding: 4px 0; line-height: 1.3; }
+  .sh-gacha-result h2 { margin: 0; font-size: 1.125rem; }
+  .sh-gacha-result p { margin: 0; }
+  .sh-rarity { font-size: 1.125rem; }
+  .sh-gacha-tools { grid-column: 2; grid-row: 2 / 5; }
+  .sh-gacha-tools p { margin: 0 0 4px; }
+  .sh-rates { padding-top: 8px; }
+}

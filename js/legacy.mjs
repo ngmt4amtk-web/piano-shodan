@@ -614,7 +614,7 @@ async function play(model = false) {
       model,
       loop: repeat || !!forcedUntil,
       onFrame: (frame) => {
-        if (view !== "piece") return;
+        if (!["piece", "play"].includes(view)) return;
         const label = root.querySelector("#play-status");
         if (!label) return;
         if (frame.stopped) {
@@ -666,7 +666,7 @@ async function play(model = false) {
         }
       },
       onEnd: () => {
-        if (view !== "piece") return;
+        if (!["piece", "play"].includes(view)) return;
         finished = !model;
         root.querySelector("#play-status").textContent = model
           ? "今度はひいてみよう。"
@@ -1136,7 +1136,7 @@ async function action(a, el) {
           : setTimeout(check, 40);
       check();
     });
-    if (view !== "piece" || navSerial !== serial) return;
+    if (!["piece", "play"].includes(view) || navSerial !== serial) return;
     if (!models.filter(Boolean).length) {
       forcedUntil = 0;
       root.classList.remove("forced");
@@ -1376,6 +1376,31 @@ async function init() {
           scope: "./",
           updateViaCache: "none",
         });
+        let changed = false, reloading = false;
+        const controlledAtBoot = !!navigator.serviceWorker.controller;
+        const safe = () => !piano.playing && !forcedUntil &&
+          !["piece", "play"].includes(view) && (window.shodanUpdateSafe?.() ?? true);
+        const applyUpdate = () => {
+          if (!safe()) return;
+          if (changed && !reloading) {
+            reloading = true;
+            location.reload();
+          } else registration.waiting?.postMessage({ type: "activate" });
+        };
+        navigator.serviceWorker.addEventListener("message", event => {
+          if (event.data?.type === "update-ready")
+            event.ports[0]?.postMessage({ busy: !safe() });
+        });
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          // First installation claims this page too; it needs no reload.
+          changed = controlledAtBoot;
+          applyUpdate();
+        });
+        registration.addEventListener("updatefound", () => {
+          registration.installing?.addEventListener("statechange", applyUpdate);
+        });
+        setInterval(applyUpdate, 500);
+        applyUpdate();
         if (navigator.serviceWorker.controller) warm();
         else
           navigator.serviceWorker.addEventListener("controllerchange", warm, {

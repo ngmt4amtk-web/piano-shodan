@@ -1,8 +1,11 @@
 import { ready, store, piano, openLegacy, leaveLegacy } from "./legacy.mjs";
 import { childWords } from "./child-text.mjs";
 import { keyboard } from "./games.mjs";
-import { stagesFor, drawGacha, rewardStage, ratesFor, RARITIES, PITY } from "./gacha.mjs";
+import { stagesFor, drawGacha, dailyRemaining, rewardStage, ratesFor, RARITIES, PITY } from "./gacha.mjs";
 import { Practice, noteName } from "./practice.mjs";
+import { Adventure } from "./adventure.mjs";
+import { adventureState } from "./journey.mjs";
+import { day } from "./state.mjs";
 
 const root = document.querySelector("#app");
 const esc = value => String(value ?? "").replace(/[&<>"']/g,
@@ -13,6 +16,7 @@ const words = value => esc(childWords(value));
 const places = { C: "ド", G: "ソ", F: "ファ", D: "レ", A: "ラ" };
 const tempos = { turtle: [60, "かめ"], rabbit: [90, "うさぎ"], cheetah: [120, "チーター"] };
 let catalog;
+let adventure;
 let songIndex;
 let screen = "home";
 let chapter = 0;
@@ -23,8 +27,12 @@ let practice;
 let sequence = 0;
 let running = false;
 let awarded = false;
+let gachaDay;
 let resumeAfterHidden = false;
 let keyboardBase = 60;
+// A question stays intact until the child leaves it or reaches its result.
+window.shodanUpdateSafe = () => !running && !practice?.active &&
+  adventure?.route !== "lesson" && !adventure?.battle?.active;
 const cache = new Map();
 const state = () => store.state.shodan;
 
@@ -55,6 +63,7 @@ function stop() {
   practice?.stop();
   practice = null;
   running = false;
+  adventure?.leave();
   leaveLegacy();
 }
 
@@ -69,7 +78,9 @@ async function renderRoute() {
   const [route, id] = location.hash.slice(1).split("/");
   screen = route || "home";
   try {
-    if (screen === "chapter") {
+    if (["home", "lesson", "boss", "create", "collection", "found", "rest"].includes(screen)) {
+      await adventure.show(screen, id);
+    } else if (screen === "chapter") {
       chapter = Math.max(0, Math.min(8, Number(id) || 0));
       renderChapter();
     } else if (screen === "drill") {
@@ -107,20 +118,12 @@ async function renderRoute() {
 }
 
 function renderHome() {
-  shell("何をれんしゅうしよう？", `<p class="sh-intro">れんしゅうしたい章を、ひとつ。</p>
-    <div class="sh-list">${[...catalog.chapters.map(c => c[0]), "曲"].map((title, i) =>
-      button(`<span class="sh-index">${String(i + 1).padStart(2, "0")}</span><strong>${words(title)}</strong><span aria-hidden="true">›</span>`,
-        "chapter/" + i, "sh-row", `data-chapter="${i}"`)).join("")}</div>
-    <p class="sh-foot">きろくを気にせず、何回でも。</p>
-    <nav class="sh-tools" aria-label="ほかのあそび">${button("ガチャ", "gacha")}${button("音ぷ・きょくあて", "play")}<button data-act="forced">むりやりひかせるモード</button></nav>`, "home", true);
+  adventure.show("home");
 }
 
 function renderChapter() {
   if (chapter === 8) {
-    shell("第9章　曲", `<p class="sh-intro">すきなきょくの地図をひらこう。</p>
-      <div class="sh-list">${store.state.order.map((no, i) => button(
-        `<span class="sh-index">${i + 1}</span><strong>${words(songIndex.find(s => s.no === no).ja)}</strong><span aria-hidden="true">›</span>`,
-        "song/" + no, "sh-row", `data-song="${no}"`)).join("")}</div>`);
+    adventure.songMap();
     return;
   }
   const drills = catalog.drills.filter(d => d.ch === chapter);
@@ -332,6 +335,8 @@ function completeDrill() {
 }
 
 function renderGacha() {
+  const left = dailyRemaining(state());
+  gachaDay = day();
   const d = catalog.drills.find(d => d.id === state().lastDrill) || catalog.drills[0];
   const saved = state().lastReward;
   const reward = saved?.drill === d.id && (saved.rarity === "UR" ||
@@ -341,9 +346,11 @@ function renderGacha() {
     reward.stage = "song";
   }
   const rates = ratesFor(d, state().rates);
-  shell("ガチャ", `<p class="sh-intro">${words(d.title)}の、ひく手をえらぶよ。</p>
+  adventure.route = "gacha";
+  adventure.shell("ガチャ", `${adventure.say("何が出るかな？")}
+    <p class="sh-intro">「${words(d.title)}」を、どの手でひくかきめよう。</p>
     <p class="sh-pity">あと${Math.max(1, PITY - state().sinceRare)}回で UR</p>
-    <div class="sh-gacha-choice">
+    <div class="sh-gacha-choice"><img class="gacha-art" src="./art/fx-5.webp" alt="ガチャのカプセル">
       <div class="sh-gacha-result" role="status" aria-live="polite">${reward ?
         `<span class="sh-rarity">${reward.rarity}</span><h2>${esc(reward.label)}</h2>${reward.guaranteed ? '<p>やくそくの UR！</p>' : ""}` : '<p>何が出るかな？</p>'}</div>
       ${reward ? reward.stage === "song" ?
@@ -351,10 +358,24 @@ function renderGacha() {
         button("ひく", "reward", "primary sh-reward sh-start") : ""}
     </div>
     <div class="sh-gacha-tools"><p>あと <strong>${state().credits}</strong> 回まわせるよ</p>
-    ${button("ガチャをまわす", "draw", "primary", state().credits > 0 ? "" : "disabled")}
-    ${state().credits ? "" : `<p class="sh-hint">れんしゅうで「できた」をおすと、1回もらえるよ。</p>${button("れんしゅうにもどる", "drill/" + d.id)}`}
+    <p class="daily-gacha">今日はあと ${left} 回</p>
+    ${button(reward ? "つぎへすすむよ" : left ? "ガチャをまわす" : "今日はおしまい", "draw", "primary", state().credits > 0 && left > 0 && !reward ? "" : "disabled")}
+    ${state().credits && left ? "" : `<p class="sh-hint">${left ? "今はからっぽ。またあとで、のぞこう。" : "また明日、のぞこう。"}</p>${button("マップにもどる", "home")}`}
     <div class="sh-rates" aria-label="出るわりあい">${RARITIES.map((r, i) => rates[i] > 0 ? `<span>${r} ${Math.max(1, Math.round(rates[i]))}%</span>` : "").join("")}</div>
-    <p class="sh-hint">これまで ${state().draws} 回</p></div>`, "drill/" + d.id);
+    <p class="sh-hint">これまで ${state().draws} 回</p></div>`, "gacha-main");
+  clearTimeout(adventure.autoReturn);
+  if (reward) {
+    adventure.autoReturn = setTimeout(() => {
+      state().lastReward = null;
+      store.save();
+      if (reward.stage === "song") navigate("chapter/8");
+      else {
+        state().options[d.id] = { ...state().options[d.id], stage: reward.stage };
+        store.save();
+        navigate("drill/" + d.id);
+      }
+    }, 2200);
+  }
 }
 
 function draw() {
@@ -365,6 +386,7 @@ function draw() {
   state().lastReward = { ...result, stage: reward.id, label: reward.label, drill: d.id };
   store.save();
   renderGacha();
+  adventure.sound("success");
   window.scrollTo(0, 0);
 }
 
@@ -372,7 +394,11 @@ function teacherExtras() {
   if (screen !== "settings" || root.querySelector("#shodan-settings")) return;
   const settings = document.createElement("section");
   settings.id = "shodan-settings";
-  settings.innerHTML = `<h2>練習とガチャ</h2>
+  settings.innerHTML = `<h2>ぼうけんの設定</h2>
+    <label>相棒の名前<input id="buddy-name" maxlength="20" value="${esc(adventure.a.buddy)}"></label>
+    <nav class="sh-tools">${button("見つけた！", "found")}${button("つくる", "create")}${button("きゅうけい", "rest")}<button data-act="forced">むりやり弾かせるモード</button></nav>
+    <details><summary>どのステップへでも進む</summary><div class="teacher-chapters">${[...catalog.chapters.map(c => c[0]), "曲"].map((title, ch) => `<section><h3>${ch + 1}. ${esc(title)}</h3>${button("章をひらく", "chapter/" + ch, "", `data-chapter="${ch}"`)}${catalog.drills.filter(d => d.ch === ch).map(d => button(words(d.title), "lesson/" + d.id)).join("")}${ch < 8 ? button("ボスとたいけつ", "boss/" + ch) : ""}</section>`).join("")}</div></details>
+    <h2>練習とガチャ</h2><p>ガチャは1日5回まで。</p>
     <p>片手の単音は「とてもゆるい」で判定。オクターブ違いは通しません。和音・両手・メトロノームは先生が判定します。</p>
     <form id="gacha-settings"><div class="sh-settings-rates">${RARITIES.map((r, i) =>
       `<label>${r} %<input name="rate-${i}" type="number" min="0" max="100" step="0.1" value="${state().rates[i]}" required></label>`).join("")}</div>
@@ -401,7 +427,13 @@ async function act(action, el) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     return;
   }
-  if (action === "retry") return renderRoute();
+  if (action === "retry") {
+    if (!adventure || !catalog) {
+      location.reload();
+      return;
+    }
+    return renderRoute();
+  }
   if (action === "start" || action === "again") return startPractice();
   if (action === "model") return startPractice(true);
   if (action === "stop") {
@@ -468,6 +500,19 @@ root.addEventListener("change", event => {
   renderDrill().then(() => root.querySelector("#" + el.id)?.focus()).catch(e => notify(e.message));
 });
 
+// Every accepted press has both an audible and a visible acknowledgement.
+document.addEventListener("click", event => {
+  const target = event.target.closest("button, summary");
+  if (!target || target.disabled) return;
+  adventure?.sound("tap");
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    target.animate([{ transform: "translateY(3px)" }, { transform: "translateY(0)" }], { duration: 130 });
+  }
+}, { capture: true });
+document.addEventListener("change", event => {
+  if (event.target.matches("select, input[type=checkbox], input[type=range]")) adventure?.sound("tap");
+});
+
 root.addEventListener("submit", event => {
   if (event.target.id !== "gacha-settings") return;
   event.preventDefault();
@@ -491,7 +536,16 @@ clock.className = "sh-clock";
 clock.setAttribute("aria-label", "30分のレッスン");
 document.body.append(clock);
 
+function refreshGachaDay() {
+  if (screen === "gacha" && gachaDay !== day()) renderGacha();
+}
+window.addEventListener("pageshow", refreshGachaDay);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) refreshGachaDay();
+});
+
 function paintClock() {
+  refreshGachaDay();
   const elapsed = store.state.lessonStart ? Math.floor((Date.now() - store.state.lessonStart) / 1000) : 0;
   const remaining = Math.max(0, 1800 - elapsed);
   const text = String(Math.floor(remaining / 60)).padStart(2, "0") + ":" + String(remaining % 60).padStart(2, "0");
@@ -542,6 +596,7 @@ window.addEventListener("pagehide", () => practice?.stop());
 try {
   await ready;
   [catalog, songIndex] = await Promise.all([json("drills/index.json"), json("index.json")]);
+  adventure = new Adventure({ root, store, piano, catalog, songs: songIndex, navigate, notify });
   await renderRoute();
   paintClock();
   setInterval(paintClock, 1000);

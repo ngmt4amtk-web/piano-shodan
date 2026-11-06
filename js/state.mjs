@@ -188,6 +188,7 @@ export class Store extends EventTarget {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) this.state = validate(JSON.parse(raw));
+      this.unreadable = localStorage.getItem(KEY + "-unreadable");
     } catch {
       this.localOK = false;
       this.invalid = true;
@@ -260,7 +261,7 @@ export class Store extends EventTarget {
     }
   }
   async readRemote() {
-    if (!this.remoteEnabled) return;
+    if (!this.remoteEnabled || this.invalid) return;
     try {
       const response = await fetch("./api/state", {
         cache: "no-store",
@@ -279,6 +280,7 @@ export class Store extends EventTarget {
     }
   }
   local() {
+    if (this.invalid) return;
     try {
       localStorage.setItem(KEY, JSON.stringify(this.state));
       this.localOK = true;
@@ -289,7 +291,7 @@ export class Store extends EventTarget {
   save() {
     // The UI is inert until restore finishes. Also reject an early programmatic
     // save; it must never turn empty boot data into a newer revision.
-    if (!this.ready) return false;
+    if (!this.ready || this.invalid) return false;
     this.state.rev++;
     this.state.updatedAt = Date.now();
     this.local();
@@ -300,7 +302,7 @@ export class Store extends EventTarget {
     return true;
   }
   queue(delay = 180) {
-    if (!this.remoteEnabled) return;
+    if (!this.remoteEnabled || this.invalid) return;
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.sync(), delay);
   }
@@ -320,7 +322,7 @@ export class Store extends EventTarget {
     } catch {}
   }
   async sync() {
-    if (!this.remoteEnabled) return;
+    if (!this.remoteEnabled || this.invalid) return;
     if (!this.ready || this.writing) return;
     clearTimeout(this.timer);
     this.writing = true;
@@ -379,6 +381,7 @@ export class Store extends EventTarget {
       rev = this.state.rev;
     this.archive(this.state);
     this.state = { ...incoming, rev };
+    this.invalid = false;
     this.save();
     this.dispatchEvent(new Event("restore"));
   }

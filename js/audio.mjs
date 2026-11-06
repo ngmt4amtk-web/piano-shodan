@@ -258,6 +258,10 @@ export class Piano extends EventTarget {
         0.02,
       );
   }
+  excludeMicUntil(end) {
+    this.micMutedUntil = Math.max(this.micMutedUntil || 0, end);
+  }
+  micBlocked() { return performance.now() < (this.micMutedUntil || 0); }
   note(
     m,
     when = this.context?.currentTime || 0,
@@ -269,6 +273,7 @@ export class Piano extends EventTarget {
       t = Math.max(when, c.currentTime),
       d = Math.max(0.008, duration),
       gain = c.createGain();
+    this.excludeMicUntil(performance.now() + (t - c.currentTime + d + .1) * 1000 + 180);
     gain.connect(this.master);
     gain.gain.setValueAtTime(0, t);
     gain.gain.linearRampToValueAtTime(
@@ -315,6 +320,8 @@ export class Piano extends EventTarget {
     clearInterval(this.interval);
     cancelAnimationFrame(this.frame);
     this.playing = false;
+    // Canceled future notes no longer need to hold the microphone closed.
+    this.micMutedUntil = performance.now() + 215;
     if (this.context) {
       const t = this.context.currentTime;
       for (const v of this.voices) {

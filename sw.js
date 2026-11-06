@@ -1,6 +1,49 @@
-const VERSION = 'piano-shodan-19be5dbde81cae71911dd55fe79ba0694285d8b137154774e7162550d047bae9';
+const VERSION = 'piano-shodan-e2b881a3d07c2bebbaf02fca6e2629bc074c5516dfdf65a49c17d94a1cb984f6';
 // Replaced by build/stamp.py; includes every deployed asset.
 const FILES = [
+  "./adventure.css",
+  "./art/boss-lefthand-1.webp",
+  "./art/boss-lefthand-2.webp",
+  "./art/boss-lefthand-3.webp",
+  "./art/boss-lefthand-4.webp",
+  "./art/boss-lefthand-5.webp",
+  "./art/boss-lefthand-6.webp",
+  "./art/boss-set1-1.webp",
+  "./art/boss-set1-2.webp",
+  "./art/boss-set1-3.webp",
+  "./art/boss-set1-4.webp",
+  "./art/boss-set1-5.webp",
+  "./art/boss-set1-6.webp",
+  "./art/boss-set2-1.webp",
+  "./art/boss-set2-2.webp",
+  "./art/boss-set2-3.webp",
+  "./art/boss-set2-4.webp",
+  "./art/boss-set2-5.webp",
+  "./art/boss-set2-6.webp",
+  "./art/boss-tanuki-1.webp",
+  "./art/boss-tanuki-2.webp",
+  "./art/boss-tanuki-3.webp",
+  "./art/boss-tanuki-4.webp",
+  "./art/boss-tanuki-5.webp",
+  "./art/boss-tanuki-6.webp",
+  "./art/buddy-dog-1.webp",
+  "./art/buddy-dog-2.webp",
+  "./art/buddy-dog-3.webp",
+  "./art/buddy-dog-4.webp",
+  "./art/buddy-dog-5.webp",
+  "./art/buddy-dog-6.webp",
+  "./art/fx-1.webp",
+  "./art/fx-2.webp",
+  "./art/fx-3.webp",
+  "./art/fx-4.webp",
+  "./art/fx-5.webp",
+  "./art/fx-6.webp",
+  "./art/journey-1.webp",
+  "./art/journey-2.webp",
+  "./art/journey-3.webp",
+  "./art/journey-4.webp",
+  "./art/journey-5.webp",
+  "./art/journey-6.webp",
   "./data/01.json",
   "./data/02.json",
   "./data/03.json",
@@ -745,6 +788,7 @@ const FILES = [
   "./icon-192.png",
   "./icon-512.png",
   "./index.html",
+  "./js/adventure.mjs",
   "./js/app.mjs",
   "./js/audio.mjs",
   "./js/child-text.mjs",
@@ -752,9 +796,11 @@ const FILES = [
   "./js/config.mjs",
   "./js/gacha.mjs",
   "./js/games.mjs",
+  "./js/journey.mjs",
   "./js/legacy.mjs",
   "./js/pitch.js",
   "./js/practice.mjs",
+  "./js/score-frame.mjs",
   "./js/score.mjs",
   "./js/state.mjs",
   "./js/version.mjs",
@@ -803,6 +849,24 @@ const required = FILES.filter(
     !path.includes("/data/raw/"),
 );
 
+let activation = null;
+function activateWhenSafe() {
+  if (!activation) activation = (async () => {
+    const clients = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
+    const busy = await Promise.all(clients.map(client => new Promise(resolve => {
+      const channel = new MessageChannel();
+      const timer = setTimeout(() => { channel.port1.close(); resolve(false); }, 700);
+      channel.port1.onmessage = event => {
+        clearTimeout(timer); channel.port1.close();
+        resolve(event.data?.busy === true);
+      };
+      client.postMessage({ type: 'update-ready' }, [channel.port2]);
+    })));
+    if (!busy.some(Boolean)) await self.skipWaiting();
+  })().finally(() => { activation = null; });
+  return activation;
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
@@ -825,7 +889,9 @@ self.addEventListener("install", (event) => {
           await scores.put(url, response);
         }
       }
-      // An update waits here; the next app startup activates it.
+      // v3 questions/performance defer activation; v2's unchanged legacy
+      // registration cannot reply, so skipWaiting + claim releases its shell.
+      await activateWhenSafe();
     })(),
   );
 });
@@ -853,7 +919,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     (async () => {
       const cache = await caches.open(assetCache(url.pathname)),
-        cached = await cache.match(event.request);
+        cached = await cache.match(event.request, { ignoreSearch: true });
       if (cached) return cached;
       const response = await fetch(event.request);
       if (response.ok) await cache.put(event.request, response.clone());
@@ -919,8 +985,12 @@ async function warm(no) {
     client.postMessage({ type: "offline-status", songs: ready });
 }
 self.addEventListener("message", (event) => {
+  if (event.data?.type === "version") {
+    event.ports[0]?.postMessage({ version: VERSION });
+    return;
+  }
   if (event.data?.type === "activate") {
-    self.skipWaiting();
+    event.waitUntil(activateWhenSafe());
     return;
   }
   if (event.data?.type === "warm") {

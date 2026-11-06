@@ -1,0 +1,2251 @@
+:root {
+  --sky: #e9f7ff;
+  --ink: #293b50;
+  --coral: #f36a52;
+  --coral-dark: #b94436;
+  --teal: #158a87;
+  --cream: #fffdf6;
+  --gold: #ffcc57;
+  --purple: #9971d8;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+}
+
+body {
+  color: var(--ink);
+  font-family: "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Hiragino Sans", system-ui, sans-serif;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+summary {
+  min-height: 44px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.art {
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.adventure {
+  background: var(--sky);
+  padding-bottom: 48px;
+  font-weight: 700;
+}
+
+.adventure button,
+body[data-screen="gacha"] button {
+  border: 2px solid #c5d7df;
+  border-bottom-width: 5px;
+  border-radius: 16px;
+  background: white;
+  color: var(--ink);
+  padding: 8px 16px;
+  font-weight: 800;
+  min-width: 44px;
+  min-height: 48px;
+  line-height: 1.4;
+  transition: translate .12s;
+}
+
+.adventure button:active {
+  translate: 0 3px;
+  border-bottom-width: 2px;
+}
+
+.adventure button:disabled {
+  opacity: .65;
+}
+
+.adventure button:focus-visible,
+.adventure input:focus-visible,
+.adventure summary:focus-visible,
+.adventure textarea:focus-visible {
+  outline: 3px solid #205dc5;
+  outline-offset: 4px;
+}
+
+.adventure .big-button,
+.adventure .light-button,
+body[data-screen="gacha"] .primary {
+  min-height: 56px;
+  background: #c94d3c;
+  border-color: var(--coral-dark);
+  color: white;
+  font-size: 1.125rem;
+}
+
+.adventure .light-button {
+  background: var(--cream);
+  color: var(--ink);
+  border-color: #c7d8df;
+}
+
+.adventure .small-button {
+  background: #fffdf8;
+  font-size: .875rem;
+  padding: 6px 12px;
+}
+
+.ad-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 72px;
+  padding: 8px max(16px, env(safe-area-inset-left));
+  background: var(--cream);
+  border-bottom: 3px solid #d0e5ec;
+}
+
+.ad-header > * {
+  min-width: 0;
+}
+
+.ad-header > .mini-xp,
+.ad-header > .weekly-streak,
+.ad-header > .header-gacha,
+.ad-header > .gear,
+.ad-header > .small-button {
+  flex-shrink: 0;
+}
+
+.ad-header > .ad-wordmark {
+  flex: 1;
+  min-width: 2em;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.ad-wordmark {
+  font-size: 1rem;
+  letter-spacing: .04em;
+}
+
+.wordmark-dot {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--coral);
+  font-size: .65rem;
+}
+
+.mini-xp {
+  color: #8b570b;
+  white-space: nowrap;
+}
+
+.weekly-streak {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  line-height: 1.3;
+}
+
+.weekly-streak small {
+  display: block;
+  font-size: .625rem;
+  color: #526676;
+}
+
+.streak-mark {
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--coral);
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  font-size: 1.75rem;
+}
+
+.adventure .header-gacha {
+  display: flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: .75rem;
+}
+
+.header-gacha img {
+  width: 42px;
+  height: 42px;
+}
+
+.adventure .gear {
+  background: transparent;
+  border: 0;
+  font-size: 1.6rem;
+  padding: 0;
+}
+
+.ad-main {
+  width: min(100%, 920px);
+  margin: auto;
+  padding: 24px;
+}
+
+.ad-main h1 {
+  font-size: 1.625rem;
+  line-height: 1.4;
+  margin: 0 0 16px;
+  letter-spacing: .02em;
+}
+
+.ad-main h2 {
+  margin: 16px 0;
+  font-size: 1.25rem;
+}
+
+.ad-main p {
+  line-height: 1.6;
+}
+
+.ad-main input,
+.ad-main textarea,
+#buddy-name {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  border: 2px solid #becfd8;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  background: white;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.map-main {
+  max-width: 550px;
+  padding: 24px 16px 120px;
+}
+
+.map-main > h1 {
+  text-align: center;
+  font-size: 1.75rem;
+  margin-bottom: 0;
+}
+
+.map-motto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: .8125rem;
+  margin: 8px 8px 24px;
+  color: #567383;
+}
+
+.map-counter {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #d5edf7;
+}
+
+.trail-world {
+  --world: var(--coral);
+  --world-dark: var(--coral-dark);
+  --world-light: #ffddd2;
+  scroll-margin-top: 80px;
+}
+
+.world-purple {
+  --world: #9b74d7;
+  --world-dark: #6e489f;
+  --world-light: #ebdefa;
+}
+
+.world-gold {
+  --world: #f2b943;
+  --world-dark: #a06d1a;
+  --world-light: #fff1bc;
+}
+
+.world-blue {
+  --world: #489cce;
+  --world-dark: #25618f;
+  --world-light: #ceeafd;
+}
+
+.world-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--world);
+  color: #fff;
+  border-bottom: 5px solid var(--world-dark);
+}
+
+.world-banner h2 {
+  margin: 0;
+  color: inherit;
+  font-size: 1.125rem;
+}
+
+.world-banner small {
+  color: inherit;
+  font-size: .625rem;
+  letter-spacing: .1em;
+}
+
+.world-number {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+.world-banner > span:last-child {
+  margin-left: auto;
+  font-size: .75rem;
+}
+
+.world-coral .world-banner {
+  color: #431d17;
+}
+
+.world-purple .world-banner {
+  color: #28183c;
+}
+
+.world-gold .world-banner {
+  color: #624318;
+}
+
+.world-blue .world-banner {
+  color: #092231;
+}
+
+.trail {
+  position: relative;
+  height: calc(var(--steps) * 124px + 120px);
+  max-width: 380px;
+  margin: auto;
+}
+
+.trail-line {
+  position: absolute;
+  inset: 110px 0 auto;
+  width: 100%;
+  height: calc((var(--steps) - 1) * 124px + 28px);
+  overflow: visible;
+  fill: none;
+  stroke: #c4e1e9;
+  stroke-linecap: round;
+  stroke-width: 18;
+}
+
+.trail-stop {
+  position: absolute;
+  top: calc(100px + var(--row) * 124px);
+  left: var(--x);
+  width: 104px;
+  translate: -50% 0;
+  text-align: center;
+  z-index: 2;
+}
+
+.adventure .step {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 76px;
+  padding: 0;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 5px solid white;
+  border-bottom-width: 5px;
+  outline: 3px solid #bfdde7;
+  background: #d2e5ed;
+  box-shadow: 0 8px 0 #9abac8;
+  color: #5b7886;
+  font-size: 2rem;
+}
+
+.adventure .step.current,
+.adventure .step.completed {
+  background: var(--world);
+  color: white;
+  box-shadow: 0 8px 0 var(--world-dark);
+  outline-color: var(--world-light);
+}
+
+.adventure .step.current {
+  outline-width: 8px;
+}
+
+.step-name {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: .6875rem;
+  max-width: 104px;
+  line-height: 1.4;
+  color: #435f6c;
+}
+
+.map-buddy {
+  position: absolute;
+  width: 138px;
+  bottom: 68px;
+  left: -78px;
+  pointer-events: none;
+}
+
+.map-buddy img {
+  display: block;
+  width: 138px;
+  height: 138px;
+  transform-origin: bottom;
+}
+
+.bubble {
+  position: relative;
+  display: block;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #c4dce6;
+  border-radius: 16px;
+  color: var(--ink);
+  font-size: .9375rem;
+  line-height: 1.5;
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: 20px;
+  width: 14px;
+  height: 14px;
+  rotate: 45deg;
+  background: white;
+  border-right: 2px solid #c4dce6;
+  border-bottom: 2px solid #c4dce6;
+}
+
+.map-buddy .bubble {
+  position: absolute;
+  left: 117px;
+  top: 15px;
+  width: 150px;
+  padding: 8px 12px;
+  font-size: .875rem;
+  text-align: left;
+}
+
+.stop-right .map-buddy .bubble {
+  left: -10px;
+  top: -36px;
+}
+
+.stop-left .map-buddy {
+  left: 20px;
+}
+
+.step-ticket {
+  position: absolute;
+  z-index: 10;
+  width: 228px;
+  padding: 16px;
+  left: 50%;
+  translate: -50% 0;
+  top: 100px;
+  background: var(--cream);
+  border: 3px solid var(--world);
+  border-radius: 18px;
+  box-shadow: 0 6px 0 #b7cdd8;
+  text-align: left;
+}
+
+.step-ticket[hidden] {
+  display: none;
+}
+
+.trail-stop:has(.step-ticket:not([hidden])) {
+  z-index: 15;
+}
+
+.step-ticket label {
+  display: block;
+  margin: 12px 0;
+  font-size: .8125rem;
+}
+
+.step-ticket .big-button {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.trail-chest,
+.boss-stop,
+.fork-stop {
+  position: absolute;
+  top: calc(100px + var(--row) * 124px);
+}
+
+.trail-chest {
+  left: -10px;
+}
+
+.adventure .art-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.art-button img {
+  display: block;
+  width: 100px;
+  height: 100px;
+}
+
+.trail-scenery {
+  position: absolute;
+  pointer-events: none;
+  width: 100px;
+  height: 100px;
+}
+
+.trail-scenery img {
+  width: 100%;
+}
+
+.scenery-one {
+  top: 245px;
+  left: -12px;
+}
+
+.scenery-two {
+  top: 485px;
+  right: -10px;
+}
+
+.boss-stop {
+  left: 50%;
+  width: 180px;
+  translate: -50% -8px;
+  text-align: center;
+}
+
+.adventure .boss-door {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  padding: 0 8px 8px;
+  background: var(--world-light);
+  border-color: var(--world-dark);
+  border-radius: 28px;
+  font-size: .8125rem;
+}
+
+.boss-door img {
+  width: 115px;
+  height: 92px;
+}
+
+.boss-step-caption {
+  display: block;
+  font-size: .75rem;
+  margin-top: 8px;
+}
+
+.fork-stop {
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.fork-stop span {
+  width: 100%;
+  text-align: center;
+  font-size: .8125rem;
+}
+
+.song-island {
+  text-align: center;
+  padding-block: 24px;
+}
+
+.songs-map-main {
+  max-width: 600px;
+}
+
+.song-path {
+  position: relative;
+  padding: 24px 0;
+}
+
+.song-path::before {
+  content: "";
+  position: absolute;
+  inset: 40px calc(50% - 10px);
+  border-left: 14px dotted #b8d9e6;
+}
+
+.song-landmark {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+
+.adventure .song-landmark-button {
+  position: relative;
+  left: calc(var(--side) * 30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  padding: 0 12px 12px;
+  border: 0;
+  border-bottom: 6px solid #bb8a4d;
+  border-radius: 45%;
+  background: #ffdda0;
+  color: #60452b;
+  font-size: .875rem;
+}
+
+.song-landmark-button img {
+  width: 140px;
+  height: 110px;
+}
+
+.song-number {
+  position: absolute;
+  left: 12px;
+  top: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  background: var(--coral);
+  color: white;
+}
+
+.piano-house {
+  display: block;
+  width: 240px;
+  margin: auto;
+}
+
+.map-nav {
+  position: fixed;
+  bottom: calc(44px + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  background: var(--cream);
+  padding: 8px 12px;
+  border-top: 3px solid #d0e5ec;
+}
+
+.map-nav button {
+  font-size: .8125rem;
+  padding-inline: 12px;
+}
+
+.force-tag {
+  display: block;
+  margin: auto;
+  font-size: .8125rem;
+}
+
+.sh-clock {
+  min-height: 44px;
+  background: #f8fcfe;
+  border-color: #ccdde5;
+  font-size: .6875rem;
+}
+
+.sh-clock button {
+  font-size: .6875rem;
+  min-height: 44px;
+  padding-block: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.buddy-says {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buddy-portrait {
+  width: 124px;
+  height: 124px;
+  flex-shrink: 0;
+}
+
+.lesson-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.lesson-main > h1 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.lesson-top {
+  position: static;
+  order: -1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .875rem;
+}
+
+.lesson-progress {
+  flex: 1;
+  height: 22px;
+  border-radius: 12px;
+  background: #c7e2ec;
+  padding: 3px;
+}
+
+.lesson-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 10px;
+  background: var(--coral);
+  transition: width .3s;
+}
+
+.combo {
+  color: #96590b;
+  white-space: nowrap;
+}
+
+.question-stage {
+  width: 100%;
+}
+
+.question-buddy {
+  margin-bottom: 8px;
+}
+
+.question-buddy .bubble {
+  flex: 1;
+}
+
+.question-content {
+  min-width: 0;
+}
+
+.question-caption {
+  font-size: .8125rem;
+  color: #516c7b;
+  margin-bottom: 8px;
+}
+
+.question-score {
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 120px;
+  padding: 20px 12px;
+  background: var(--cream);
+  border-radius: 20px;
+  border: 2px solid #cfdfdf;
+}
+
+.question-score svg {
+  display: block;
+  width: auto;
+  height: 150px;
+  max-width: 100%;
+}
+
+.note-trail {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 12px;
+}
+
+.note-pebble {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #cee5ef;
+  color: #416679;
+  font-size: .75rem;
+}
+
+.note-pebble.played {
+  background: #b9e9df;
+  color: #155e5b;
+}
+
+.note-pebble[aria-current] {
+  outline: 3px solid var(--coral);
+}
+
+#question-status {
+  min-height: 30px;
+  text-align: center;
+  font-size: .875rem;
+  margin: 12px 0;
+}
+
+#question-status[data-kind="wrong"] {
+  border-bottom: 3px solid #b44343;
+}
+
+#question-status[data-kind="correct"] {
+  color: #156b61;
+}
+
+.question-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.input-options {
+  margin-top: 12px;
+  font-size: .75rem;
+}
+
+.input-options > div {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mic-listening {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  font-size: .8125rem;
+}
+
+.sound-bars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+}
+
+.sound-bars i {
+  width: 5px;
+  height: 22px;
+  border-radius: 4px;
+  background: var(--teal);
+  animation: listening .8s ease-in-out infinite alternate;
+}
+
+.sound-bars i:nth-child(2n) {
+  animation-delay: -.4s;
+}
+
+.sound-bars i:nth-child(3n) {
+  animation-delay: -.2s;
+}
+
+#question-controls > .small-button {
+  display: block;
+  margin: auto;
+}
+
+.finger-answers,
+.listen-answers,
+.teacher-answers {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.finger-choice {
+  flex: 1;
+  padding: 8px 4px !important;
+}
+
+.finger-choice strong {
+  display: block;
+  font-size: 1.75rem;
+}
+
+.finger-choice span {
+  font-size: .625rem;
+}
+
+.listen-answers > button,
+.teacher-answers > button {
+  flex: 1;
+}
+
+.listening-notes {
+  display: flex;
+  gap: 32px;
+  color: var(--coral-dark);
+  font-size: 2rem;
+}
+
+.teacher-label {
+  text-align: center;
+  color: #526c78;
+  font-size: .75rem;
+}
+
+.ad-keyboard {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  width: 100%;
+  height: 120px;
+  gap: 3px;
+  border: 5px solid #344357;
+  border-radius: 14px;
+  background: #344357;
+  padding: 0;
+  overflow: hidden;
+}
+
+.adventure .piano-white {
+  position: relative;
+  grid-column: calc(var(--key) + 1);
+  min-width: 0;
+  height: 110px;
+  border: 0;
+  border-bottom: 6px solid #cdd1d1;
+  border-radius: 0 0 8px 8px;
+  padding: 0 0 6px;
+  background: var(--cream);
+  font-size: .75rem;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+
+.adventure .piano-black {
+  position: absolute;
+  z-index: 2;
+  width: 7.5%;
+  height: 68px;
+  min-width: 24px;
+  min-height: 44px;
+  left: calc(var(--black) * 12.5% - 4%);
+  border: 0;
+  border-bottom: 5px solid #141e2d;
+  padding: 0;
+  border-radius: 0 0 6px 6px;
+  background: #35475e;
+}
+
+.adventure .key-hint {
+  background: var(--gold);
+}
+
+.beat-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0 16px;
+}
+
+.beat-dots i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #b4d5e2;
+}
+
+.beat-dots .beat-hit {
+  background: var(--coral);
+  scale: 1.2;
+}
+
+.adventure .tap-drum {
+  display: block;
+  width: 130px;
+  height: 100px;
+  margin: auto;
+  border-radius: 50%;
+  background: var(--coral);
+  border: 6px solid var(--cream);
+  outline: 3px solid var(--coral-dark);
+  box-shadow: 0 8px 0 var(--coral-dark);
+  color: white;
+  font-size: 1.75rem;
+}
+
+.center-stage,
+.finish-main {
+  text-align: center;
+  padding-top: 32px;
+}
+
+.center-stage > button {
+  margin: 8px;
+}
+
+.finish-scene {
+  position: relative;
+  width: min(100%, 300px);
+  margin: auto;
+  height: 270px;
+}
+
+.finish-buddy {
+  width: 260px;
+  height: 260px;
+  position: relative;
+  animation: pop .35s ease-out;
+}
+
+.finish-stars {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  left: 0;
+  top: -20px;
+}
+
+.finish-numbers {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.finish-numbers span {
+  color: #647b88;
+  font-size: .875rem;
+}
+
+.finish-numbers strong {
+  display: block;
+  font-size: 2.25rem;
+  color: #ad600d;
+}
+
+.finish-line {
+  font-size: 1.125rem;
+}
+
+.auto-label {
+  color: #647b88;
+  font-size: .75rem;
+}
+
+.result-buddy,
+.surprise-chest,
+.sleeping-buddy {
+  display: block;
+  width: min(100%, 280px);
+  height: 260px;
+  margin: auto;
+}
+
+.sleeping-buddy {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+.rest-seconds {
+  display: block;
+  font-size: 2.5rem;
+  color: #617d90;
+  font-variant-numeric: tabular-nums;
+}
+
+.rest-teacher {
+  text-align: left;
+  font-size: .75rem;
+  max-width: 240px;
+  margin: 24px auto 0;
+}
+
+.boss-intro {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.boss-intro-art {
+  width: 240px;
+  height: 220px;
+}
+
+.boss-intro h2 {
+  font-size: 1.5rem;
+}
+
+.eyebrow {
+  color: #a84131;
+  letter-spacing: .14em;
+  font-size: .75rem;
+}
+
+.boss-rules h3 {
+  font-size: 1.125rem;
+}
+
+.rule-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adventure .rule-choices .selected {
+  background: #fff0bd;
+  border-color: #b68520;
+}
+
+.custom-rule-label {
+  display: block;
+  font-size: .8125rem;
+  margin: 16px 0;
+}
+
+.boss-rules > .big-button {
+  width: 100%;
+}
+
+.boss-fineprint {
+  font-size: .75rem;
+  color: #4d6979;
+}
+
+.battle-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.battle-hud > div {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: space-between;
+  font-size: .75rem;
+}
+
+.battle-hud meter {
+  width: 100%;
+  height: 22px;
+  accent-color: var(--coral);
+}
+
+.battle-time {
+  display: grid;
+  place-items: center;
+  min-width: 62px;
+  height: 62px;
+  border: 3px solid var(--coral-dark);
+  border-radius: 50%;
+  background: white;
+  color: #ad352a;
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-scene {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 200px;
+}
+
+.fighter {
+  width: 45%;
+  height: 210px;
+}
+
+.versus {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  color: #d5533e;
+  rotate: -12deg;
+  font-size: 1.5rem;
+  font-style: italic;
+}
+
+.hit-fx {
+  position: absolute;
+  inset: 0;
+}
+
+.hit-fx img {
+  position: absolute;
+  width: 40%;
+  height: 160px;
+  right: 5%;
+  top: 20px;
+  animation: punch .4s ease-out both;
+}
+
+.hit-fx img:first-child {
+  right: 20%;
+  z-index: 1;
+}
+
+.battle-turn {
+  text-align: center;
+  font-size: 1.125rem;
+  margin: 0 0 8px;
+}
+
+.battle-turn small {
+  font-size: .75rem;
+}
+
+.battle-score {
+  overflow: hidden;
+  position: relative;
+  background: var(--cream);
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.battle-score > img,
+.battle-score > svg {
+  display: block;
+  width: 100%;
+  max-height: 100px;
+  min-height: 56px;
+}
+
+.battle-score > svg {
+  width: auto;
+  height: 80px;
+  margin: auto;
+  max-width: 100%;
+}
+
+.score-mask {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #ffe5b1;
+  border-radius: 16px;
+}
+
+.score-mask[hidden] {
+  display: none;
+}
+
+.battle-judges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.battle-judges > button {
+  flex: 1;
+}
+
+.battle-judges > span {
+  width: 100%;
+}
+
+.adventure .interfere {
+  display: block;
+  min-height: 44px;
+  margin: 12px auto 0;
+  background: #fff2c5;
+  border-color: #c28d21;
+  font-size: .875rem;
+}
+
+.battle-rule {
+  text-align: center;
+  font-size: .75rem;
+}
+
+.result-score {
+  font-size: 1.5rem;
+}
+
+.compose-slots {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+  margin: 24px 0;
+}
+
+.compose-slots span {
+  display: grid;
+  place-items: center;
+  height: 52px;
+  border: 2px dashed #a6c4d3;
+  border-radius: 12px;
+  font-size: .875rem;
+}
+
+.compose-slots .filled {
+  border-style: solid;
+  border-color: #bf673f;
+  background: #ffdb9b;
+  color: #794e2f;
+}
+
+.compose-status {
+  text-align: center;
+  font-size: .875rem;
+}
+
+.compose-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 16px;
+}
+
+.compose-tools > button {
+  flex: 1;
+}
+
+.composition-name,
+.found-label {
+  display: block;
+  margin: 24px 0;
+  font-size: .875rem;
+}
+
+.discovery-sparkles {
+  width: 180px;
+  height: 180px;
+}
+
+.boss-collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+}
+
+.boss-collection img {
+  display: block;
+  width: 140px;
+  height: 140px;
+  max-width: 100%;
+  margin: auto;
+}
+
+.boss-collection label {
+  font-size: .75rem;
+}
+
+.empty-illustration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #506c7c;
+}
+
+.empty-illustration img {
+  width: 100px;
+  height: 100px;
+}
+
+.discovery-list {
+  list-style: none;
+  padding: 0;
+}
+
+.discovery-list li {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 2px solid #c6e0ea;
+}
+
+.discovery-star {
+  color: #a5680e;
+}
+
+.adventure .saved-composition {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 12px 0;
+}
+
+.saved-composition span {
+  display: block;
+  font-size: .75rem;
+  margin-top: 8px;
+}
+
+body[data-screen="gacha"] {
+  background: var(--sky);
+}
+
+.gacha-art {
+  display: block;
+  width: 150px;
+  height: 150px;
+  margin: auto;
+}
+
+.sh-gacha-result {
+  border: 0;
+  border-radius: 20px;
+  background: var(--cream);
+  padding: 24px;
+  text-align: center;
+}
+
+.teacher-chapters {
+  display: grid;
+  gap: 16px;
+}
+
+.teacher-chapters button {
+  margin: 4px;
+}
+
+.bouncing {
+  animation: buddy-hop 2.2s ease-in-out infinite;
+}
+
+.just-completed {
+  animation: pop .5s ease-out;
+}
+
+.wiggle {
+  animation: wiggle .25s ease-in-out;
+}
+
+.question-correct .buddy-portrait {
+  animation: pop .35s ease-out;
+}
+
+@keyframes buddy-hop {
+  0%, 70%, 100% { transform: translateY(0) rotate(0); }
+  80% { transform: translateY(-10px) rotate(-3deg); }
+  90% { transform: translateY(0) rotate(2deg); }
+}
+
+@keyframes pop {
+  0% { scale: .8; }
+  70% { scale: 1.08; }
+  100% { scale: 1; }
+}
+
+@keyframes wiggle {
+  20%, 60% { translate: -5px 0; }
+  40%, 80% { translate: 5px 0; }
+  100% { translate: 0 0; }
+}
+
+@keyframes punch {
+  0% { scale: .4; opacity: 0; }
+  30% { scale: 1.1; opacity: 1; }
+  100% { scale: 1; opacity: 0; }
+}
+
+@keyframes listening {
+  from { scale: 1 .35; }
+  to { scale: 1 1; }
+}
+
+@keyframes breathing {
+  50% { scale: 1.02; }
+}
+
+@media (min-width: 700px) {
+  .ad-header {
+    padding-inline: max(24px, calc((100vw - 872px) / 2));
+  }
+
+  .question-stage {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 32px;
+    align-items: center;
+  }
+
+  .question-buddy .buddy-says {
+    flex-direction: column;
+  }
+
+  .question-buddy .buddy-portrait {
+    width: 210px;
+    height: 210px;
+  }
+
+  .boss-setup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .boss-setup > h1 {
+    grid-column: 1 / -1;
+  }
+
+  .boss-intro {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 350px) {
+  .ad-main {
+    padding: 16px;
+  }
+
+  .ad-header {
+    padding-inline: 8px;
+  }
+
+  .ad-wordmark {
+    font-size: .75rem;
+  }
+
+  .map-main {
+    padding-bottom: 120px;
+  }
+
+  .map-nav {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+
+  .map-nav button {
+    padding-inline: 8px;
+    font-size: .75rem;
+  }
+
+  .map-buddy {
+    left: -62px;
+  }
+
+  .map-buddy .bubble {
+    width: 130px;
+    left: 103px;
+  }
+
+  .world-banner {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .world-banner h2 {
+    font-size: 1rem;
+  }
+
+  .step-ticket {
+    width: 200px;
+  }
+
+  .trail-stop:nth-of-type(4n + 2) .step-ticket {
+    left: 24px;
+  }
+
+  .trail-stop:nth-of-type(4n) .step-ticket {
+    left: 76px;
+  }
+
+  .lesson-top {
+    width: calc(100% - 32px);
+    top: 90px;
+    gap: 8px;
+    font-size: .75rem;
+  }
+
+  .lesson-main > h1 {
+    margin-top: 16px;
+    font-size: 1.375rem;
+  }
+
+  .buddy-portrait {
+    width: 88px;
+    height: 88px;
+  }
+
+  .bubble {
+    font-size: .8125rem;
+    padding: 8px;
+  }
+
+  .question-score {
+    min-height: 96px;
+    padding: 12px;
+  }
+
+  .question-score svg {
+    height: 110px;
+  }
+
+  .boss-intro-art {
+    width: 130px;
+    height: 150px;
+  }
+
+  .boss-intro h2 {
+    font-size: 1.125rem;
+  }
+
+  .fighter {
+    height: 160px;
+  }
+
+  .battle-scene {
+    min-height: 160px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .ad-header {
+    min-height: 52px;
+    padding: 2px 24px;
+  }
+
+  .ad-main {
+    padding: 12px 24px 16px;
+  }
+
+  .ad-main > h1 {
+    font-size: 1.125rem;
+    margin-bottom: 8px;
+  }
+
+  .map-main {
+    padding-bottom: 120px;
+  }
+
+  .map-main > h1 {
+    font-size: 1.5rem;
+  }
+
+  .lesson-main > h1 {
+    margin-top: 12px;
+  }
+
+  .lesson-top {
+    top: 61px;
+    font-size: .75rem;
+  }
+
+  .lesson-progress {
+    height: 18px;
+  }
+
+  .question-stage {
+    display: grid;
+    grid-template-columns: 155px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .question-buddy .buddy-says {
+    flex-direction: column;
+  }
+
+  .question-buddy .buddy-portrait {
+    width: 130px;
+    height: 110px;
+  }
+
+  .question-buddy .bubble {
+    font-size: .75rem;
+    padding: 8px;
+  }
+
+  .question-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px;
+    gap: 4px 12px;
+  }
+
+  .question-caption {
+    grid-column: 1;
+    margin: 0;
+    font-size: .625rem;
+  }
+
+  .question-score {
+    grid-column: 1;
+    padding: 12px 8px;
+    min-height: 88px;
+  }
+
+  .question-score svg {
+    height: 96px;
+  }
+
+  .note-trail {
+    grid-column: 1;
+    padding-top: 4px;
+    gap: 3px;
+  }
+
+  .note-pebble {
+    width: 24px;
+    height: 24px;
+    font-size: .625rem;
+  }
+
+  #question-status {
+    grid-column: 1;
+    margin: 4px 0;
+    font-size: .75rem;
+    min-height: 20px;
+  }
+
+  #question-controls {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    align-self: center;
+  }
+
+  .question-tools {
+    grid-column: 1 / -1;
+    justify-content: start;
+    margin-top: 4px;
+    gap: 4px;
+  }
+
+  .input-options {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  .finger-answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .finger-choice {
+    min-height: 60px !important;
+    padding: 2px !important;
+  }
+
+  .finger-choice strong {
+    font-size: 1.25rem;
+  }
+
+  .teacher-answers,
+  .listen-answers {
+    flex-direction: column;
+  }
+
+  .ad-keyboard {
+    height: 104px;
+  }
+
+  .adventure .piano-white {
+    height: 94px;
+    min-width: 0;
+    font-size: .625rem;
+  }
+
+  .adventure .piano-black {
+    min-width: 18px;
+    height: 56px;
+  }
+
+  .adventure .tap-drum {
+    height: 76px;
+    width: 110px;
+    font-size: 1.25rem;
+  }
+
+  .center-stage,
+  .finish-main {
+    position: relative;
+    min-height: 244px;
+    padding-left: 42%;
+    padding-top: 16px;
+  }
+
+  .center-stage > h1,
+  .finish-main > h1 {
+    font-size: 1.375rem;
+  }
+
+  .finish-scene {
+    position: absolute;
+    left: 8%;
+    top: 0;
+    width: 240px;
+    height: 230px;
+  }
+
+  .finish-buddy,
+  .finish-stars {
+    width: 230px;
+    height: 230px;
+  }
+
+  .finish-numbers strong {
+    font-size: 1.75rem;
+  }
+
+  .finish-main p {
+    margin-block: 8px;
+  }
+
+  .center-stage > .result-buddy,
+  .center-stage > .sleeping-buddy,
+  .center-stage > .surprise-chest {
+    position: absolute;
+    width: 230px;
+    height: 220px;
+    left: 8%;
+    top: 8px;
+  }
+
+  .rest-main p {
+    margin: 4px 0;
+  }
+
+  .rest-teacher {
+    margin-top: 0;
+  }
+
+  .boss-setup {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 8px 24px;
+  }
+
+  .boss-intro {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .boss-intro-art {
+    width: 170px;
+    height: 160px;
+  }
+
+  .boss-intro h2 {
+    font-size: 1.125rem;
+  }
+
+  .boss-intro p {
+    font-size: .75rem;
+  }
+
+  .boss-rules h3 {
+    margin: 0 0 8px;
+    font-size: .875rem;
+  }
+
+  .rule-choices {
+    gap: 4px;
+  }
+
+  .rule-choices button {
+    font-size: .75rem;
+    padding: 4px 8px;
+  }
+
+  .custom-rule-label {
+    margin: 8px 0;
+  }
+
+  .custom-rule-label input {
+    margin-top: 4px;
+  }
+
+  .battle-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 4px 24px;
+    grid-template-rows: 26px 52px 126px;
+    padding-block: 8px 12px;
+  }
+
+  .battle-main > h1 {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  .battle-hud {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .battle-time {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+
+  .battle-scene {
+    grid-column: 1;
+    min-height: 118px;
+  }
+
+  .fighter {
+    height: 118px;
+  }
+
+  .battle-controls {
+    grid-column: 2;
+    grid-row: 2 / 4;
+  }
+
+  .battle-score {
+    padding: 4px;
+    height: 48px;
+    margin-bottom: 4px;
+  }
+
+  .battle-score > img,
+  .battle-score > svg {
+    height: 40px;
+    max-height: 40px;
+    min-height: 40px;
+  }
+
+  .battle-mic-status {
+    font-size: .625rem;
+    min-height: 12px;
+  }
+
+  .battle-rule {
+    display: none;
+  }
+
+  .battle-mic-status {
+    display: none;
+  }
+
+  .battle-judges {
+    gap: 4px;
+  }
+
+  .battle-judges > span {
+    font-size: .625rem;
+    line-height: 1;
+  }
+
+  .battle-judges > button {
+    min-height: 44px;
+    padding: 4px 8px;
+    font-size: 1rem;
+  }
+
+  .battle-turn {
+    font-size: 1rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .adventure .interfere {
+    margin-top: 4px;
+  }
+
+  .create-main {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr) 200px;
+    gap: 8px 16px;
+    padding-block: 8px;
+  }
+
+  .create-main > h1 {
+    grid-column: 1 / -1;
+  }
+
+  .create-main .buddy-says {
+    grid-column: 1;
+    grid-row: 2 / 7;
+    flex-direction: column;
+  }
+
+  .create-main .compose-slots {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .compose-slots span {
+    height: 40px;
+  }
+
+  .create-main .ad-keyboard {
+    grid-column: 2;
+    grid-row: 3;
+    height: 96px;
+  }
+
+  .create-main .piano-white {
+    height: 86px;
+  }
+
+  .create-main .compose-status {
+    grid-column: 2;
+    margin: 0;
+    font-size: .75rem;
+  }
+
+  .create-main .compose-tools {
+    margin: 0;
+  }
+
+  .create-main .composition-name {
+    grid-column: 3;
+    grid-row: 3;
+    margin: 0;
+  }
+
+  .create-main > .compose-play-tools {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  .create-main > .compose-save-tools {
+    grid-column: 3;
+    grid-row: 4;
+  }
+
+  .create-main .compose-tools > button {
+    min-height: 44px;
+    padding: 4px 8px;
+    font-size: .8125rem;
+  }
+
+  #compose-judge {
+    grid-column: 2 / -1;
+  }
+
+  .gacha-art {
+    width: 100px;
+    height: 100px;
+  }
+
+  .sh-gacha-result {
+    padding: 4px;
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 350px) and (max-height: 650px) {
+  .lesson-main {
+    padding-block: 12px;
+  }
+
+  .lesson-main > h1 {
+    font-size: 1.125rem;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  .lesson-main .buddy-portrait {
+    width: 68px;
+    height: 68px;
+  }
+
+  .lesson-main .question-score {
+    min-height: 80px;
+  }
+
+  .lesson-main .question-score svg {
+    height: 96px;
+  }
+
+  .lesson-main .note-trail {
+    padding-top: 8px;
+  }
+
+  .lesson-main .note-pebble {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lesson-main #question-status {
+    margin-block: 8px;
+    min-height: 22px;
+    font-size: .8125rem;
+  }
+
+  .lesson-main .teacher-label {
+    margin-bottom: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Shared v3 score paging and gacha shell. */
+.score-pages { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.score-pages span { font-size: .75rem; white-space: nowrap; }
+.gacha-main { max-width: 780px; }
+.gacha-main > .buddy-says { margin-bottom: 12px; }
+.gacha-main .sh-gacha-tools > button { width: 100%; }
+.gacha-main .sh-intro { font-size: 1rem; line-height: 1.5; }
+
+/* Small portrait screens must keep every question control above the clock. */
+@media (max-width: 600px) and (max-height: 900px) {
+  body[data-screen="lesson"] .ad-header { min-height: 56px; padding-block: 2px; }
+  .lesson-main { margin-top: 0; padding: 8px 16px; }
+  .lesson-main > h1 { margin: 6px 0; font-size: 1.125rem; }
+  .lesson-main .question-buddy { display: none; }
+  .lesson-main .question-caption { margin-bottom: 4px; }
+  .lesson-main .question-score { min-height: 82px; padding: 4px; }
+  .lesson-main .question-score svg { height: 124px; }
+  .lesson-main .note-trail { padding-top: 6px; }
+  .lesson-main .note-pebble { width: 24px; height: 24px; }
+  .lesson-main #question-status { margin: 6px 0; min-height: 22px; font-size: .75rem; }
+  .lesson-main .question-tools { margin-top: 6px; gap: 4px; }
+  .lesson-main .question-tools button { min-height: 44px; }
+  .lesson-main .input-options { margin-top: 0; }
+  .lesson-main .input-options summary { padding-block: 10px; }
+  .lesson-main .ad-keyboard { height: 92px; }
+  .lesson-main .piano-white { height: 82px; }
+  .lesson-main .piano-black { height: 50px; }
+  .lesson-main .teacher-label { margin: 4px 0; }
+  .lesson-main .tap-drum { min-height: 64px; height: 64px; }
+  .lesson-main .beat-dots { margin: 4px 0; }
+}
+
+@media (max-height: 440px) and (orientation: landscape) {
+  /* One bottom strip leaves space for the current stop and its start ticket. */
+  body[data-screen="home"] .map-nav {
+    bottom: 0; right: 286px; min-height: 48px; padding: 0 8px;
+    align-items: center; justify-content: start; gap: 6px;
+  }
+  body[data-screen="home"] .map-nav button { min-height: 44px; padding: 4px 10px; }
+  body[data-screen="home"] .sh-clock { left: auto; width: 286px; min-height: 48px; padding-inline: 8px; }
+  .map-main { padding-bottom: 64px; }
+  .map-buddy, .stop-left .map-buddy { left: -102px; bottom: auto; top: -8px; width: 80px; }
+  .map-buddy img { width: 80px; height: 80px; }
+  .map-buddy .bubble { display: none; }
+  .step-ticket { top: -2px; left: 108px; translate: none; width: 220px; padding: 8px; }
+  .stop-right .step-ticket { left: auto; right: 108px; }
+  .stop-right .map-buddy { left: 120px; }
+  .step-ticket label { margin: 4px 0; }
+  .step-ticket input { margin-top: 2px; min-height: 44px; padding: 4px 8px; }
+  .step-ticket .big-button { margin-top: 4px; min-height: 44px; }
+
+  body[data-screen="lesson"] .ad-header { min-height: 52px; padding-block: 2px; }
+  .lesson-main { margin: 0 auto; padding: 4px 24px; }
+  .lesson-main > h1 { margin: 4px 0; font-size: 1rem; }
+  .lesson-main .lesson-top { font-size: .75rem; height: 18px; }
+  .lesson-main .question-stage { display: block; }
+  .lesson-main .question-buddy { display: none; }
+  .lesson-main .question-content {
+    display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 132px;
+    grid-template-rows: 14px 96px 28px 40px; gap: 2px 12px;
+  }
+  .lesson-main .question-caption { grid-area: 1 / 1; margin: 0; }
+  .lesson-main .question-score { grid-area: 2 / 1; padding: 2px 6px; min-height: 76px; }
+  .lesson-main .question-score svg { height: 90px; }
+  .lesson-main .note-trail { grid-area: 3 / 1; padding: 2px 0; }
+  .lesson-main #question-status { grid-area: 4 / 1; margin: 0; min-height: 0; font-size: .75rem; }
+  .lesson-main #question-controls { grid-area: 1 / 2 / 5 / 3; align-self: center; }
+  .lesson-main .question-tools {
+    grid-area: 1 / 3 / 4 / 4; display: grid; grid-template-columns: 1fr;
+    gap: 2px; align-self: start; margin: 0;
+  }
+  .lesson-main .question-tools button { min-height: 44px; height: 44px; padding: 4px 8px; }
+  .lesson-main .input-options { grid-area: 4 / 3; margin: 0; align-self: end; }
+  .lesson-main .input-options summary { min-height: 44px; padding-block: 10px; }
+  .lesson-main .teacher-label { margin: 2px 0; }
+  .lesson-main .question-stage[data-type="teacher"] .question-score { grid-area: 2 / 1 / 4 / 2; }
+  .lesson-main .question-stage[data-type="teacher"] .question-score:has(.score-pages) { grid-area: 1 / 1 / 5 / 2; }
+  .lesson-main .question-stage[data-type="teacher"] .note-trail,
+  .lesson-main .question-stage[data-type="teacher"] .question-caption:has(~ .question-score .score-pages),
+  .lesson-main .question-stage[data-type="teacher"] .question-score:has(.score-pages) ~ #question-status { display: none; }
+  .lesson-main .question-stage[data-type="teacher"] .question-score svg { height: 90px; }
+  .lesson-main .score-pages button { min-height: 44px; }
+  .lesson-main .ad-keyboard { height: 116px; }
+  .lesson-main .piano-white { height: 106px; }
+  .lesson-main .piano-black { height: 62px; }
+  .lesson-main .finger-answers { grid-template-columns: 1fr 1fr; gap: 4px; }
+  .lesson-main .finger-choice { min-height: 64px !important; }
+  .lesson-main .tap-drum { width: 100%; height: 88px; min-height: 88px; }
+  .lesson-main .beat-dots { margin: 4px 0; }
+
+  .gacha-main { display: grid; grid-template-columns: 112px minmax(0, 1fr) 250px; gap: 4px 16px; padding-block: 4px; }
+  .gacha-main > h1 { grid-column: 1 / -1; margin: 0; }
+  .gacha-main > .buddy-says { grid-area: 2 / 1 / 6 / 2; flex-direction: column; margin: 0; }
+  .gacha-main .buddy-portrait { width: 100px; height: 100px; }
+  .gacha-main .bubble { padding: 6px; font-size: .75rem; }
+  .gacha-main .sh-intro { grid-area: 2 / 2; margin: 0; font-size: .875rem; }
+  .gacha-main .sh-pity { grid-area: 3 / 2; margin: 0; font-size: .875rem; }
+  .gacha-main .sh-gacha-choice { grid-area: 4 / 2; }
+  .gacha-main .gacha-art { width: 72px; height: 72px; }
+  .gacha-main .sh-gacha-tools { grid-area: 2 / 3 / 6 / 4; }
+  .gacha-main .sh-gacha-result { margin: 0; padding: 4px; min-height: 32px; }
+  .gacha-main .sh-gacha-result p { margin: 0; }
+  .gacha-main .sh-gacha-tools p { margin: 2px 0; font-size: .8125rem; }
+  .gacha-main .sh-rates { padding-top: 8px; font-size: .75rem; }
+}
+
+/* Input selection opens above the fixed clock without moving the question. */
+.lesson-main .input-options { position: relative; }
+.lesson-main .input-options[open] > div {
+  position: absolute; bottom: 44px; right: 0; z-index: 25;
+  width: min(280px, 80vw); padding: 8px; border: 2px solid #c4dce6;
+  border-radius: 12px; background: var(--cream); box-shadow: 0 4px 12px #293b5033;
+}
+.lesson-main .input-options[open] > div button { width: 100%; min-height: 44px; }
+@media (max-height: 440px) and (orientation: landscape) {
+  body.adventure[data-screen="gacha"] .gacha-main .sh-pity { grid-area: 3 / 2; }
+}
+
+@media (min-height: 441px), (orientation: portrait) {
+  .map-buddy, .stop-right .map-buddy { left: -102px; top: -8px; bottom: auto; width: 80px; }
+  .stop-left .map-buddy { left: 120px; }
+  .map-buddy img { width: 80px; height: 80px; }
+  .map-buddy .bubble, .stop-right .map-buddy .bubble {
+    display: block; left: 30px; top: -34px; width: 170px;
+    padding: 6px 8px; font-size: .75rem;
+  }
+  .stop-right .map-buddy .bubble { left: 0; }
+  .stop-left .map-buddy .bubble { left: -130px; }
+  .stop-left .map-buddy .bubble::after { left: auto; right: 20px; }
+}
+
+@media (max-width: 350px) and (max-height: 650px) {
+  .lesson-main .question-score svg { height: 92px; }
+  .lesson-main .question-stage[data-type="teacher"] .question-score svg { height: 70px; }
+}
+
+@media (min-width: 700px) and (min-height: 600px) {
+  .lesson-main .question-score svg { height: 100px; }
+}

@@ -1,3 +1,6 @@
+import { adventureState } from "./journey.mjs";
+import { day } from "./state.mjs";
+
 export const RARITIES = ["N", "R", "SR", "SSR", "UR"];
 export const PITY = 8;
 export const DEFAULT_RATES = [60, 25, 8, 5, 2];
@@ -33,12 +36,25 @@ export function ratesFor(drill, rates = DEFAULT_RATES) {
   return weights.map(n => total ? n * 100 / total : 0);
 }
 
+export function dailyRemaining(state) {
+  const daily = adventureState(state);
+  // A clock rollback must not grant another set of draws.
+  if (!daily.drawDay || daily.drawDay < day()) {
+    daily.drawDay = day();
+    daily.dailyDraws = 0;
+  }
+  return Math.max(0, 5 - daily.dailyDraws);
+}
+
 export function drawGacha(state, random = Math.random, drill = { hands: "B" }) {
+  if (!dailyRemaining(state)) return null;
+  const daily = adventureState(state);
   if (state.credits < 1) return null;
   const guaranteed = state.sinceRare + 1 >= PITY;
   const rarity = guaranteed ? "UR" : sampleRarity(ratesFor(drill, state.rates), random);
   state.credits--;
   state.draws++;
+  daily.dailyDraws++;
   state.sinceRare = rarity === "UR" ? 0 : state.sinceRare + 1;
   return { rarity, guaranteed };
 }

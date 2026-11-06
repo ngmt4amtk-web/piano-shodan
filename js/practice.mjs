@@ -60,6 +60,11 @@ export class Practice {
       this.onStatus("「" + noteName(this.events[0].m) + "」をまっているよ。", "wait");
       const frame = () => {
         if (!this.active || token !== this.token) return;
+        if (this.piano.micBlocked()) {
+          this.holder.reset();
+          this.raf = requestAnimationFrame(frame);
+          return;
+        }
         const x = mic.read();
         let det = detect(x, mic.sampleRate);
         // 移植元は150Hzから。周波数の単位だけ倍にして低いピアノ音も調べる。

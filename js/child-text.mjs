@@ -1,5 +1,9 @@
 // Readings used on the shared child-facing screens. Teacher UI is excluded.
 const READINGS = {
+  生徒: "きみ",
+  箱: "はこ",
+  写して: "うつして",
+  今度: "こんど",
   低い: "ひくい",
   上って: "上がって",
   下りる: "下がる",
@@ -92,10 +96,41 @@ const READINGS = {
   書き出: "かき出",
   保存: "ほぞん",
   端末: "スマホ",
-  先生の部屋: "先生の部屋",
+  動か: "うごか",
+  動き: "うごき",
+  動く: "うごく",
+  落と: "おと",
+  刻み: "きざみ",
+  変え: "かえ",
+  変わ: "かわ",
+  短く: "みじかく",
+  別の: "べつの",
+  倍: "ばい",
+  待つ: "まつ",
+  押し: "おし",
+  画面: "がめん",
+  進ん: "すすん",
+  勝ち: "かち",
+  決: "き",
+  速い: "はやい",
+  丘: "おか",
+  島: "しま",
+  起き: "おき",
+  部: "ぶ",
+  屋: "や",
+  体力: "たいりょく",
+  連続: "れんぞく",
+  合図: "あいず",
+  用意: "ようい",
+  初: "しょ",
+  段: "だん",
 };
 export function childWords(text) {
-  if (text === "すきなきょくを1曲") return text;
+  const title = "ピアノ初段";
+  const parts = text.split(title);
+  return parts.map(part => convert(part)).join(title);
+}
+function convert(text) {
   for (const [word, reading] of Object.entries(READINGS))
     text = text.replaceAll(word, reading);
   return text;

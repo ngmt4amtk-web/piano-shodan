@@ -367,7 +367,9 @@ body[data-screen="gacha"] .primary {
 
 .adventure .step {
   display: grid;
+  grid-template-columns: 1fr;
   place-items: center;
+  text-align: center;
   width: 82px;
   height: 76px;
   padding: 0;
@@ -2153,7 +2155,13 @@ body[data-screen="gacha"] {
   .map-main { padding-bottom: 64px; }
   .map-buddy, .stop-left .map-buddy { left: -102px; bottom: auto; top: -8px; width: 80px; }
   .map-buddy img { width: 80px; height: 80px; }
-  .map-buddy .bubble { display: none; }
+  .map-buddy .bubble {
+    display: block; left: 206px; right: auto; top: 16px; bottom: auto;
+    width: 170px; padding: 6px 8px; font-size: .8125rem;
+  }
+  .map-buddy .bubble::after { display: none; }
+  .stop-right .map-buddy .bubble { left: -302px; }
+  .current-stop:has(.step-ticket:not([hidden])) .map-buddy .bubble { display: none; }
   .step-ticket { top: -2px; left: 108px; translate: none; width: 220px; padding: 8px; }
   .stop-right .step-ticket { left: auto; right: 108px; }
   .stop-right .map-buddy { left: 120px; }

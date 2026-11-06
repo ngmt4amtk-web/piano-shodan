@@ -169,13 +169,19 @@ export class Adventure {
   }
   revealStop(stop) {
     if (!stop || this.route !== "home") return;
-    const targets = [...stop.querySelectorAll(".step, .step-ticket:not([hidden])")];
+    const targets = [...stop.querySelectorAll(".step, .step-name, .step-ticket:not([hidden])")];
     const rects = targets.map(el => el.getBoundingClientRect());
     const top = this.root.querySelector(".ad-header").getBoundingClientRect().bottom + 10;
     const bottom = Math.min(innerHeight, ...[...document.querySelectorAll(".map-nav, .sh-clock")]
       .map(el => el.getBoundingClientRect().top)) - 10;
     const first = Math.min(...rects.map(r => r.top));
     const last = Math.max(...rects.map(r => r.bottom));
+    if (innerHeight <= 440) {
+      // 短い横画面は現在地を真ん中へ。上の余白に隠れず、次の丸も見える。
+      const middle = (first + last) / 2 - (top + bottom) / 2;
+      window.scrollBy(0, last - first > bottom - top ? first - top : middle);
+      return;
+    }
     window.scrollBy(0, last > bottom ? last - bottom : first < top ? first - top : 0);
   }
 

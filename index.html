@@ -18,14 +18,43 @@
 <div id="app">
 <main class="boot">
 <h1>ピアノ初段</h1>
-<p role="status">れんしゅうをひらいています…</p>
+<p id="boot-wait" role="status">れんしゅうをひらいています…</p>
 </main>
 </div>
 <div id="toast" role="status" aria-live="polite">
 </div>
 <dialog id="dialog" aria-label="えらぶ">
 </dialog>
-<script type="module" src="./js/app.mjs?v=3">
+<script>
+(function () {
+  // 部品が1つ取れないとモジュール全体が動かない。1回だけ自動で開き直し、だめならボタンを出す。
+  var settled = false;
+  window.__bootStuck = function () {
+    if (settled) return;
+    var wait = document.getElementById("boot-wait");
+    if (!wait) return;
+    settled = true;
+    var tried = true;
+    try {
+      tried = sessionStorage.getItem("piano-boot-retry") === "1";
+      if (!tried) sessionStorage.setItem("piano-boot-retry", "1");
+    } catch (error) {}
+    if (!tried) {
+      location.reload();
+      return;
+    }
+    wait.textContent = "ひらけなかったよ。電ぱをたしかめて、もう1回おしてね。";
+    var button = document.createElement("button");
+    button.type = "button";
+    button.id = "boot-retry";
+    button.textContent = "もう1回ひらく";
+    button.onclick = function () { location.reload(); };
+    wait.parentNode.appendChild(button);
+  };
+  setTimeout(window.__bootStuck, 10000);
+})();
+</script>
+<script type="module" src="./js/app.mjs?v=3" onerror="window.__bootStuck()">
 </script>
 <noscript>このアプリはJavaScriptを使います。SafariのせっていでJavaScriptをオンにしてください。</noscript>
 </body>

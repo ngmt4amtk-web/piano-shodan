@@ -8,7 +8,7 @@
 python3 -m http.server 8080 --directory site
 python3 build/drills_build.py
 python3 build/stamp.py
-/Users/ngmt.mtk/Projects/piano-himitsu/tools/venv/bin/python tests/run.py
+python tests/run.py  # 仮想環境の python で実行
 ```
 
 ブラウザで `http://localhost:8080/` を開きます。LilyPondは隣のpiano-himitsuの2.24.4を読むだけで使用します。別の場所では環境変数 `LILYPOND` に実行ファイルを指定できます。

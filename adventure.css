@@ -815,7 +815,8 @@ body[data-screen="gacha"] .primary {
 }
 
 .note-pebble[aria-current] {
-  outline: 3px solid var(--coral);
+  background: #ffe14d;
+  outline: none;
 }
 
 #question-status {
@@ -873,7 +874,8 @@ body[data-screen="gacha"] .primary {
   height: 22px;
   border-radius: 4px;
   background: var(--teal);
-  animation: listening .8s ease-in-out infinite alternate;
+  transform: scaleY(var(--mic-level, .5));
+  transition: transform .08s linear;
 }
 
 .sound-bars i:nth-child(2n) {
@@ -2256,4 +2258,20 @@ body[data-screen="gacha"] {
 
 @media (min-width: 700px) and (min-height: 600px) {
   .lesson-main .question-score svg { height: 100px; }
+}
+
+/* The practice draw keeps the range and pending result visible together. */
+.gacha-main .gacha-range { margin: 12px 0; }
+.gacha-main .gacha-range p { margin: 0 0 8px; }
+.gacha-main .gacha-chapters { display: flex; flex-wrap: wrap; gap: 6px; }
+.gacha-main .gacha-chapters button { width: 48px; height: 48px; min-width: 0; padding: 0; border-radius: 50%; }
+.gacha-main .gacha-chapters button.selected { background: #3158b7; color: white; }
+.gacha-main .sh-gacha-choice { display: grid; gap: 8px; }
+.gacha-main .sh-gacha-result { margin: 0; min-height: 0; }
+.gacha-main .sh-gacha-tools { margin-top: 12px; }
+@media (orientation: landscape) and (max-height: 500px) {
+  .gacha-main { display: block; }
+  .gacha-main .gacha-range { margin: 4px 0; }
+  .gacha-main .sh-gacha-choice { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+  .gacha-main .sh-gacha-tools { margin-top: 4px; }
 }

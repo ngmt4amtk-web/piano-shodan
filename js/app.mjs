@@ -6,6 +6,7 @@ import { Practice, noteName } from "./practice.mjs";
 import { Adventure } from "./adventure.mjs";
 import { adventureState } from "./journey.mjs";
 import { day } from "./state.mjs";
+import { scoreFrame, highlightNote, insertScoreLayer, addBassNames } from "./score-frame.mjs";
 
 const root = document.querySelector("#app");
 const esc = value => String(value ?? "").replace(/[&<>"']/g,
@@ -100,6 +101,17 @@ async function renderRoute() {
       await renderDrill();
     } else if (screen === "gacha") {
       renderGacha();
+    } else if (screen === "gacha-play") {
+      const reward = state().lastReward;
+      drill = catalog.drills.find(d => d.id === reward?.drill);
+      if (!drill || !stagesFor(drill).some(s => s.id === reward?.stage)) return navigate("gacha");
+      chapter = drill.ch;
+      options = { pos: drill.pos[0], stage: reward.stage, tempo: "turtle", input: "mic", companion: false };
+      const token = sequence;
+      layout = await loadLayout();
+      // 読み込み中に別の画面へ移っていたら、古いガチャの演奏を始めない。
+      if (token !== sequence || screen !== "gacha-play") return;
+      await startPractice();
     } else if (screen === "settings") {
       await openLegacy("settings");
       teacherExtras();
@@ -124,6 +136,12 @@ function renderHome() {
 function renderChapter() {
   if (chapter === 8) {
     adventure.songMap();
+    if (state().lastReward?.stage === "song") {
+      const card = document.createElement("section");
+      card.className = "song-gacha-check";
+      card.innerHTML = `<p>すきなきょくを1曲ひけたら、先生にきいてね。</p>${button("先生 ○", "gacha-song-done", "primary")}${button("先生 ×", "gacha-song-again")}`;
+      root.querySelector(".songs-map-main h1")?.after(card);
+    }
     return;
   }
   const drills = catalog.drills.filter(d => d.ch === chapter);
@@ -207,10 +225,14 @@ function mountScore() {
   svg.setAttribute("role", "img");
   svg.setAttribute("aria-label", childWords(drill.title) + "の楽ふ");
   svg.classList.add("drill-svg");
+  const frame = scoreFrame(layout);
+  svg.setAttribute("viewBox", frame.join(" "));
+  addBassNames(svg, layout.notes, state().bassNames !== false, layout.staffLines);
+  svg.dataset.frame = svg.getAttribute("viewBox");
   if (chosenStage().hand !== "B" && matchMedia("(orientation: portrait)").matches) {
     const original = svg.cloneNode(true);
     svg.replaceChildren();
-    const [x, y, width, height] = layout.viewBox;
+    const [x, y, width, height] = svg.getAttribute("viewBox").split(/[ ,]+/).map(Number);
     const lastBar = Math.max(...layout.notes.map(n => n.bar));
     let top = 0;
     for (let bar = 0; bar <= lastBar; bar += 2) {
@@ -239,6 +261,18 @@ function mountScore() {
     svg.classList.add("sh-wrapped-score");
   }
   host.replaceChildren(svg);
+  svg.addEventListener("click", e => {
+    if (!practice?.active) return;
+    const system = e.target.closest(".sh-score-system") || svg;
+    const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(system.getScreenCTM().inverse());
+    const nearest = layout.notes.map(n => ({ n, d: Math.hypot(n.x - point.x, n.y - point.y) })).sort((a, b) => a.d - b.d)[0];
+    if (!nearest || nearest.d > 3) return;
+    const selected = practice.events.findIndex(event => event.m === nearest.n.m && Math.abs((event.gt ?? event.t) - nearest.n.t) < .0001);
+    if (selected < 0 || selected > practice.index) return;
+    practice.index = selected;
+    practice.holder?.reset();
+    paintScore(selected, practice.events[selected]);
+  });
   host.removeAttribute("role");
 }
 
@@ -254,25 +288,18 @@ function paintScore(index, target) {
     const done = events.slice(0, index).some(e => e.m === n.m && Math.abs((e.gt ?? e.t) - n.t) < .0001);
     const current = target && n.m === target.m && Math.abs(n.t - (target.gt ?? target.t)) < .0001;
     if (!done && !current) continue;
-    const circle = document.createElementNS(ns, "circle");
-    circle.setAttribute("cx", n.x);
-    circle.setAttribute("cy", n.y);
-    circle.setAttribute("r", current ? 1.65 : 1.15);
-    circle.setAttribute("fill", current ? "#3158b7" : "#167143");
-    circle.setAttribute("fill-opacity", ".35");
-    circle.setAttribute("stroke", current ? "#3158b7" : "#167143");
-    circle.setAttribute("stroke-width", ".25");
-    group.append(circle);
+    group.append(highlightNote(n, layout.staffLines, !current));
   }
-  for (const system of svg.querySelectorAll(".sh-score-system")) system.append(group.cloneNode(true));
-  if (!svg.querySelector(".sh-score-system")) svg.append(group);
+  for (const system of svg.querySelectorAll(".sh-score-system")) insertScoreLayer(system, group.cloneNode(true));
+  if (!svg.querySelector(".sh-score-system")) insertScoreLayer(svg, group);
   // 演奏中は今の小節を大きく。全体は停止すると同じ画面で見られる。
   const n = target && layout.notes.find(n => n.m === target.m && Math.abs(n.t - (target.gt ?? target.t)) < .0001);
   if (running && n && !svg.querySelector(".sh-score-system")) {
     const bar = layout.notes.filter(v => v.bar === n.bar);
     const left = n.bar === 0 ? layout.viewBox[0] : Math.min(...bar.map(v => v.x)) - 6;
     const right = Math.max(...bar.map(v => v.x)) + 7;
-    svg.setAttribute("viewBox", `${left} ${layout.viewBox[1]} ${right - left} ${layout.viewBox[3]}`);
+    const [, y, , height] = (svg.dataset.frame || scoreFrame(layout).join(" ")).split(/[ ,]+/).map(Number);
+    svg.setAttribute("viewBox", `${left} ${y} ${right - left} ${height}`);
   }
 }
 
@@ -284,16 +311,21 @@ async function startPractice(model = false) {
   const stage = chosenStage();
   keyboardBase = stage.hand === "L" ? 48 : Math.min(72, Math.max(48,
     Math.floor(Math.min(...layout.notes.map(n => n.m)) / 12) * 12));
+  const gachaPlay = screen === "gacha-play";
+  const stageNotes = drill.positions[options.pos].events[stage.hand] || [];
+  const gachaMic = gachaPlay && !stage.metro && stage.hand !== "B" &&
+    new Set(stageNotes.map(n => n.t)).size === stageNotes.length;
   shell(drill.title, `<section class="sh-performance">
     <div class="sh-playing-head"><span>${esc(stage.label)} · ${places[options.pos]}のところ</span><span id="drill-progress">0</span></div>
     <div class="sh-score-wrap"><div id="drill-score"></div></div>
     <p id="drill-status" role="status" aria-live="polite"></p>
+    ${gachaMic ? `<div id="gacha-mic"><div class="mic-listening"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>マイク オン</span></div>${button("先生チェックにする", "gacha-teacher")}</div>` : ""}
     ${options.input === "keys" ? `<div class="sh-keyboard">${keyboard(keyboardBase)}</div>
       <div class="sh-key-range">${button("低い音へ", "keys-lower")}${button("高い音へ", "keys-higher")}</div>` : ""}
-    <div class="sh-transport">${button("止める", "stop", "", 'id="drill-stop"')}${button("おてほん", "model")}${button("ひき方をかえる", "setup")}</div>
-    <div class="sh-teacher" aria-label="先生のボタン">${button("できた", "done", "primary", 'id="drill-done"')}${button("もう1回", "again")}</div>
+    <div class="sh-transport">${button("止める", "stop", "", 'id="drill-stop"')}${gachaPlay ? "" : button("おてほん", "model") + button("ひき方をかえる", "setup")}</div>
+    <div class="sh-teacher" aria-label="先生のボタン">${gachaMic ? "" : button(gachaPlay ? "先生 ○" : "できた", "done", "primary", 'id="drill-done"') + button(gachaPlay ? "先生 ×" : "もう1回", "again")}</div>
     <p class="sh-hint">先生のボタンは、いつでもつかえるよ。</p>
-  </section>`, "chapter/" + drill.ch);
+  </section>`, gachaPlay ? "gacha" : "chapter/" + drill.ch);
   document.body.dataset.screen = "perform";
   mountScore();
   practice = new Practice({
@@ -305,6 +337,12 @@ async function startPractice(model = false) {
       if (!el) return;
       if (el.textContent !== text) el.textContent = text;
       el.dataset.kind = kind;
+      const micControl = root.querySelector("#gacha-mic");
+      if (micControl && kind === "mic-error")
+        micControl.innerHTML = `<p>マイクがつかえません</p>${button("マイクをオンにする", "gacha-mic-retry", "primary")}${button("先生チェックにする", "gacha-teacher")}`;
+    },
+    onLevel(level) {
+      root.querySelector("#gacha-mic .sound-bars")?.style.setProperty("--mic-level", Math.max(.15, level));
     },
     onProgress(index, total, target) {
       const el = root.querySelector("#drill-progress");
@@ -313,7 +351,11 @@ async function startPractice(model = false) {
       el.dataset.index = index;
       paintScore(index, target);
     },
-    onEnd() {
+    onEnd(model) {
+      if (gachaPlay && !model && practice.waitable && practice.completed) {
+        completeGacha();
+        return;
+      }
       const el = root.querySelector("#drill-stop");
       if (el) el.textContent = "はじめから";
     }
@@ -334,60 +376,59 @@ function completeDrill() {
   root.querySelector("#drill-status").textContent = "先生が「できた」をつけたよ。";
 }
 
+function gachaRange() {
+  if (!Array.isArray(state().gachaRange)) {
+    const a = adventureState(state());
+    const current = catalog.drills.find(d => d.id === a.resume?.id) ||
+      catalog.drills.find(d => !a.completed[d.id]) || catalog.drills.at(-1);
+    const openCh = Math.min(7, Math.max(current.ch, catalog.drills.find(d => !a.completed[d.id])?.ch ?? 8));
+    state().gachaRange = Array.from({ length: openCh + 1 }, (_, i) => i);
+    store.save();
+  }
+  return state().gachaRange.filter(n => Number.isInteger(n) && n >= 0 && n < 8);
+}
+
 function renderGacha() {
-  const left = dailyRemaining(state());
   gachaDay = day();
-  const d = catalog.drills.find(d => d.id === state().lastDrill) || catalog.drills[0];
-  const saved = state().lastReward;
-  const reward = saved?.drill === d.id && (saved.rarity === "UR" ||
-    stagesFor(d).some(s => s.id === saved.stage && s.rarity === saved.rarity)) ? saved : null;
-  if (reward?.rarity === "UR") {
-    reward.label = "すきなきょくを1曲";
-    reward.stage = "song";
-  }
-  const rates = ratesFor(d, state().rates);
+  const selected = gachaRange();
+  const reward = state().lastReward;
+  const d = catalog.drills.find(item => item.id === reward?.drill);
   adventure.route = "gacha";
-  adventure.shell("ガチャ", `${adventure.say("何が出るかな？")}
-    <p class="sh-intro">「${words(d.title)}」を、どの手でひくかきめよう。</p>
-    <p class="sh-pity">あと${Math.max(1, PITY - state().sinceRare)}回で UR</p>
-    <div class="sh-gacha-choice"><img class="gacha-art" src="./art/fx-5.webp" alt="ガチャのカプセル">
-      <div class="sh-gacha-result" role="status" aria-live="polite">${reward ?
-        `<span class="sh-rarity">${reward.rarity}</span><h2>${esc(reward.label)}</h2>${reward.guaranteed ? '<p>やくそくの UR！</p>' : ""}` : '<p>何が出るかな？</p>'}</div>
-      ${reward ? reward.stage === "song" ?
-        button("先生：とじる", "close-reward", "primary sh-reward sh-start") :
-        button("ひく", "reward", "primary sh-reward sh-start") : ""}
-    </div>
-    <div class="sh-gacha-tools"><p>あと <strong>${state().credits}</strong> 回まわせるよ</p>
-    <p class="daily-gacha">今日はあと ${left} 回</p>
-    ${button(reward ? "つぎへすすむよ" : left ? "ガチャをまわす" : "今日はおしまい", "draw", "primary", state().credits > 0 && left > 0 && !reward ? "" : "disabled")}
-    ${state().credits && left ? "" : `<p class="sh-hint">${left ? "今はからっぽ。またあとで、のぞこう。" : "また明日、のぞこう。"}</p>${button("マップにもどる", "home")}`}
-    <div class="sh-rates" aria-label="出るわりあい">${RARITIES.map((r, i) => rates[i] > 0 ? `<span>${r} ${Math.max(1, Math.round(rates[i]))}%</span>` : "").join("")}</div>
-    <p class="sh-hint">これまで ${state().draws} 回</p></div>`, "gacha-main");
-  clearTimeout(adventure.autoReturn);
-  if (reward) {
-    adventure.autoReturn = setTimeout(() => {
-      state().lastReward = null;
-      store.save();
-      if (reward.stage === "song") navigate("chapter/8");
-      else {
-        state().options[d.id] = { ...state().options[d.id], stage: reward.stage };
-        store.save();
-        navigate("drill/" + d.id);
-      }
-    }, 2200);
-  }
+  adventure.shell("練習ガチャ", `<div class="gacha-range"><p>どの章から えらぶ？</p><div class="gacha-chapters" role="group" aria-label="ガチャのはんい">${Array.from({ length: 8 }, (_, i) =>
+    button(String(i + 1).padStart(2, "0"), "gacha-range", selected.includes(i) ? "selected" : "", `data-chapter="${i}" aria-pressed="${selected.includes(i)}" ${reward ? "disabled" : ""}`)).join("")}</div></div>
+    <div class="sh-gacha-choice"><div class="sh-gacha-result" role="status" aria-live="polite">${reward ?
+      `<span class="sh-rarity">${esc(reward.rarity)}</span><h2>${reward.stage === "song" ? "すきなきょくを1曲" : `${String((d?.ch ?? 0) + 1).padStart(2, "0")} ${words(d?.title || "れんしゅう")}`}</h2><p>${esc(reward.label)}</p>${d && state().gachaDone?.[d.id + ":" + reward.stage] ? "<span>✓ まえにクリア</span>" : ""}` : '<p>なにが出るかな？</p>'}</div>
+      ${reward ? button("ひく", "reward", "primary sh-reward") + button("先生がパス", "pass-reward") : button("ガチャをまわす", "draw", "primary", selected.length ? "" : "disabled")}</div>
+    <div class="sh-gacha-tools"><p>クリア <strong>${state().gachaClears || 0}</strong>こ</p>${!reward && state().lastGachaCleared ? `<p>✓ ${state().lastGachaCleared.stage === "song" ? "" : words(catalog.drills.find(d => d.id === state().lastGachaCleared.drill)?.title || "れんしゅう")} ${esc(state().lastGachaCleared.label)}</p>` : ""}<p class="sh-pity">あと${Math.max(1, PITY - state().sinceRare)}回で UR</p></div>`, "gacha-main");
 }
 
 function draw() {
-  const d = catalog.drills.find(d => d.id === state().lastDrill) || catalog.drills[0];
-  const result = drawGacha(state(), Math.random, d);
+  const selected = gachaRange();
+  const pool = catalog.drills.filter(d => selected.includes(d.ch));
+  const result = drawGacha(state(), Math.random, pool);
   if (!result) return;
-  const reward = rewardStage(d, result.rarity);
-  state().lastReward = { ...result, stage: reward.id, label: reward.label, drill: d.id };
+  state().lastReward = result;
   store.save();
   renderGacha();
   adventure.sound("success");
   window.scrollTo(0, 0);
+}
+
+function completeGacha() {
+  const reward = state().lastReward;
+  if (!reward || awarded) return;
+  awarded = true;
+  practice?.stop();
+  state().gachaDone = { ...(state().gachaDone || {}), [reward.drill + ":" + reward.stage]: true };
+  state().gachaClears = (state().gachaClears || 0) + 1;
+  state().lastReward = null;
+  state().lastGachaCleared = { ...reward };
+  store.save();
+  running = false;
+  const status = root.querySelector("#drill-status");
+  if (status) status.textContent = "クリア！";
+  root.querySelector(".sh-teacher").innerHTML = '<strong class="sh-done-note">クリア！</strong>';
+  setTimeout(() => { if (screen === "gacha-play") navigate("gacha"); }, 900);
 }
 
 function teacherExtras() {
@@ -396,15 +437,16 @@ function teacherExtras() {
   settings.id = "shodan-settings";
   settings.innerHTML = `<h2>ぼうけんの設定</h2>
     <label>相棒の名前<input id="buddy-name" maxlength="20" value="${esc(adventure.a.buddy)}"></label>
+    <label><input id="bass-names" type="checkbox" ${state().bassNames !== false ? "checked" : ""}>ヘ音記号にドレミを書く</label>
     <nav class="sh-tools">${button("見つけた！", "found")}${button("つくる", "create")}${button("きゅうけい", "rest")}<button data-act="forced">むりやり弾かせるモード</button></nav>
     <details><summary>どのステップへでも進む</summary><div class="teacher-chapters">${[...catalog.chapters.map(c => c[0]), "曲"].map((title, ch) => `<section><h3>${ch + 1}. ${esc(title)}</h3>${button("章をひらく", "chapter/" + ch, "", `data-chapter="${ch}"`)}${catalog.drills.filter(d => d.ch === ch).map(d => button(words(d.title), "lesson/" + d.id)).join("")}${ch < 8 ? button("ボスとたいけつ", "boss/" + ch) : ""}</section>`).join("")}</div></details>
-    <h2>練習とガチャ</h2><p>ガチャは1日5回まで。</p>
+    <h2>練習とガチャ</h2>
     <p>片手の単音は「とてもゆるい」で判定。オクターブ違いは通しません。和音・両手・メトロノームは先生が判定します。</p>
     <form id="gacha-settings"><div class="sh-settings-rates">${RARITIES.map((r, i) =>
       `<label>${r} %<input name="rate-${i}" type="number" min="0" max="100" step="0.1" value="${state().rates[i]}" required></label>`).join("")}</div>
     <p>8回目はかならずUR。URが出ると数え直します。</p>
     <p id="gacha-settings-error" role="alert"></p><button class="primary" type="submit">確率と天井を保存する</button></form>
-    <p>合計100%、URを0より大きくしてください。出せる物だけで確率を割り直します。URが出ると天井までの回数を数え直します。</p>
+    <p>合計100%、URを0より大きくしてください。出せる物だけで確率を割り直します。</p>
     ${store.unreadable ? button("読めなかった保存を書き出す", "export-unreadable") : ""}
     <p>できた段：${Object.keys(state().done).length} / ${catalog.drills.reduce((n, d) => n + stagesFor(d).length, 0)}。ガチャ：${state().draws}回。</p>`;
   root.querySelector("main.settings")?.prepend(settings);
@@ -434,7 +476,13 @@ async function act(action, el) {
     }
     return renderRoute();
   }
-  if (action === "start" || action === "again") return startPractice();
+  if (action === "start" || action === "again" || action === "gacha-mic-retry") return startPractice();
+  if (action === "gacha-teacher") {
+    practice?.stop();
+    root.querySelector("#gacha-mic").innerHTML = "先生とひこう。";
+    root.querySelector(".sh-teacher").innerHTML = button("先生 ○", "done", "primary", 'id="drill-done"') + button("先生 ×", "again");
+    return;
+  }
   if (action === "model") return startPractice(true);
   if (action === "stop") {
     if (practice?.active) {
@@ -456,7 +504,7 @@ async function act(action, el) {
     root.querySelector(`[data-field="${el.dataset.field}"][data-value="${el.dataset.value}"]`)?.focus();
     return;
   }
-  if (action === "done") return completeDrill();
+  if (action === "done") return screen === "gacha-play" ? completeGacha() : completeDrill();
   if (action === "next") {
     const stages = stagesFor(drill);
     options.stage = stages[(stages.findIndex(s => s.id === options.stage) + 1) % stages.length].id;
@@ -465,18 +513,37 @@ async function act(action, el) {
     return renderDrill();
   }
   if (action === "draw") return draw();
-  if (action === "close-reward") {
-    const id = state().lastReward.drill;
+  if (action === "gacha-song-done") {
+    const reward = state().lastReward;
+    if (reward?.stage !== "song") return;
+    state().gachaClears = (state().gachaClears || 0) + 1;
+    state().gachaDone = { ...(state().gachaDone || {}), song: true };
+    state().lastGachaCleared = { ...reward };
     state().lastReward = null;
     store.save();
-    return navigate("drill/" + id);
+    navigate("gacha");
+    notify("クリア！");
+    return;
+  }
+  if (action === "gacha-song-again") {
+    notify("もう1回ひいてみよう。");
+    return;
+  }
+  if (action === "gacha-range") {
+    const n = Number(el.dataset.chapter);
+    const selected = gachaRange();
+    state().gachaRange = selected.includes(n) ? selected.filter(ch => ch !== n) : [...selected, n].sort((a, b) => a - b);
+    store.save();
+    return renderGacha();
+  }
+  if (action === "pass-reward") {
+    state().lastReward = null;
+    store.save();
+    return renderGacha();
   }
   if (action === "reward") {
-    const reward = state().lastReward;
-    if (reward.stage === "song") return;
-    state().options[reward.drill] = { ...state().options[reward.drill], stage: reward.stage };
-    store.save();
-    return navigate("drill/" + reward.drill);
+    if (state().lastReward?.stage === "song") return navigate("chapter/8");
+    return navigate("gacha-play");
   }
   navigate(action);
 }
@@ -493,6 +560,7 @@ root.addEventListener("click", event => {
 
 root.addEventListener("change", event => {
   const el = event.target;
+  if (el.id === "bass-names") { state().bassNames = el.checked; store.save(); return; }
   const field = { "drill-stage": "stage", "drill-input": "input", companion: "companion" }[el.id];
   if (!field) return;
   options[field] = el.type === "checkbox" ? el.checked : el.value;

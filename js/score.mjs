@@ -1,5 +1,6 @@
 import { DATA } from "./config.mjs";
 import { pieceKey } from "./state.mjs";
+import { highlightNote, insertScoreLayer, addBassNames } from "./score-frame.mjs";
 const NS = "http://www.w3.org/2000/svg";
 const cache = new Map();
 const node = (tag, attrs) => {
@@ -35,6 +36,9 @@ export async function score(
   container.replaceChildren(...(partialLabel ? [partialLabel] : []), svg);
   const notes = useEasy ? k.notesEasy : k.notes,
     staff = useEasy ? k.staffYEasy : k.staffY;
+  const staffLines = n => n.hand === "L" ? [staff.down[0], 0, 0, 0, staff.down[1]] : [staff.up[0], 0, 0, 0, staff.up[1]];
+  const vb = svg.viewBox.baseVal;
+  addBassNames(svg, notes, store.state.shodan.bassNames !== false, [staff.down[0], staff.down[1]]);
   const durations = notes.map(
     (n) =>
       (n.hand === "L" && useEasy ? song.Leasy : song[n.hand]).find(
@@ -72,9 +76,12 @@ export async function score(
     );
   }
   const fingers = node("g", { class: "fingers", "pointer-events": "none" }),
+    ranges = node("g", { class: "score-ranges", "pointer-events": "none" }),
     markers = node("g", { class: "markers", "pointer-events": "none" }),
     targets = node("g", { class: "finger-targets" });
-  svg.append(fingers, markers, targets);
+  insertScoreLayer(svg, ranges);
+  insertScoreLayer(svg, markers);
+  svg.append(fingers, targets);
   function drawFingers() {
     fingers.replaceChildren();
     const saved = store.state.fingers[pieceKey(song.no, k)] || {};
@@ -103,17 +110,7 @@ export async function score(
     svg.setAttribute("aria-label", `${song.ja}の一ぶ。色の音ぷだけひこう`);
     for (const n of notes) {
       if (included(n))
-        svg.append(
-          node("circle", {
-            cx: n.x,
-            cy: n.y,
-            r: 2.2,
-            fill: "#e1ae44",
-            "fill-opacity": ".3",
-            "pointer-events": "none",
-            class: "range-note",
-          }),
-        );
+        ranges.append(highlightNote(n, staffLines(n), true));
     }
   }
   const nearest = (e) => {
@@ -127,10 +124,11 @@ export async function score(
   notes.forEach((n, i) => {
     const index = originalIndex(n, i);
     if (index < 0 || !included(n)) return;
-    const target = node("circle", {
-      cx: n.x,
-      cy: n.y,
-      r: 2.1,
+    const target = node("rect", {
+      x: n.x - 2.1,
+      y: n.y - 2.1,
+      width: 4.2,
+      height: 4.2,
       fill: "transparent",
       class: "note-target",
       "data-note-index": index,
@@ -157,7 +155,13 @@ export async function score(
       };
     });
     target.addEventListener("contextmenu", (e) => e.preventDefault());
-    target.addEventListener("pointerup", () => clearTimeout(press));
+    target.addEventListener("pointerup", () => {
+      if (press) {
+        markers.replaceChildren(highlightNote(n, staffLines(n)));
+        clearTimeout(press);
+        press = null;
+      }
+    });
     target.addEventListener("pointercancel", () => clearTimeout(press));
   });
   // Explicit control in the score menu gives keyboard / screen reader users the same edit.
@@ -172,19 +176,9 @@ export async function score(
       for (const [i, n] of notes.entries()) {
         if (!included(n) || n.t > t + 0.015 || t >= n.t + durations[i])
           continue;
-        const r = n.hand === "R";
-        markers.append(
-          node("circle", {
-            cx: n.x,
-            cy: n.y,
-            r: 1.05,
-            fill: r ? "#cf4f3a" : "none",
-            "fill-opacity": ".52",
-            stroke: r ? "#b83728" : "#28789e",
-            "stroke-width": ".18",
-            class: `play-marker ${r ? "right" : "left"}`,
-          }),
-        );
+        const marker = highlightNote(n, staffLines(n));
+        marker.classList.add("play-marker", n.hand === "R" ? "right" : "left");
+        markers.append(marker);
       }
     },
   };

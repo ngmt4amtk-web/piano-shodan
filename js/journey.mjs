@@ -1,5 +1,5 @@
 // Short lessons are assembled from the unchanged drill events.
-export const QUESTION_TYPES = ["play", "mimic", "finger", "note", "listen", "rhythm", "teacher"];
+export const QUESTION_TYPES = ["play", "mimic", "finger", "note", "listen", "teacher"];
 
 export const BUDDY_LINES = [
   "やるじゃん。", "ふーん、できるんだ。", "今の、いい音。", "もう1こ、いく？",
@@ -111,7 +111,7 @@ export function buildLesson(drill, previous = drill, pos = drill.pos[0]) {
     question("listen", simple.slice(0, 2)),
     question(chord ? "teacher" : "note", chord ? firstGroups(allHands) : simple.slice(0, 1), { hand: drill.hands === "B" ? "B" : hand }),
     question(chord ? "teacher" : "mimic", chord ? firstGroups(allHands) : middle.length ? middle : source.slice(0, 4), { hand: drill.hands === "B" ? "B" : hand }),
-    question("rhythm", simple.slice(0, 4)),
+    question(chord ? "teacher" : "play", chord ? firstGroups(allHands) : single(source.filter(n => n.t >= (middle[0]?.t ?? 0))).slice(0, 8), { hand: drill.hands === "B" ? "B" : hand }),
     question(chord ? "teacher" : "play", chord ? allHands : source, { finale: true, hand: drill.hands === "B" ? "B" : hand })
   ];
 }

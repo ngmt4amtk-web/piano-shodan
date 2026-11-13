@@ -46,17 +46,25 @@ export function dailyRemaining(state) {
   return Math.max(0, 5 - daily.dailyDraws);
 }
 
-export function drawGacha(state, random = Math.random, drill = { hands: "B" }) {
-  if (!dailyRemaining(state)) return null;
-  const daily = adventureState(state);
-  if (state.credits < 1) return null;
+export function drawGacha(state, random = Math.random, drills = [{ hands: "B" }]) {
+  const pool = Array.isArray(drills) ? drills : [drills];
+  if (!pool.length || state.lastReward) return null;
+  const choices = pool.flatMap(drill => stagesFor(drill).map(stage => ({ drill, stage })));
   const guaranteed = state.sinceRare + 1 >= PITY;
-  const rarity = guaranteed ? "UR" : sampleRarity(ratesFor(drill, state.rates), random);
-  state.credits--;
+  const available = new Set(choices.map(item => item.stage.rarity));
+  available.add("UR");
+  const rates = state.rates.map((weight, i) => available.has(RARITIES[i]) ? weight : 0);
+  let rarity;
+  // 先生のガチャの決まり: 8回目はかならず UR。
+  if (guaranteed) rarity = "UR";
+  else rarity = sampleRarity(rates, random);
+  const candidates = choices.filter(item => item.stage.rarity === rarity);
+  const item = rarity === "UR" ? null : candidates[Math.floor(random() * candidates.length)];
+  if (rarity !== "UR" && !item) return null;
   state.draws++;
-  daily.dailyDraws++;
   state.sinceRare = rarity === "UR" ? 0 : state.sinceRare + 1;
-  return { rarity, guaranteed };
+  return { rarity, guaranteed, drill: item?.drill.id, stage: item?.stage.id || "song",
+    label: item?.stage.label || "すきなきょくを1曲" };
 }
 
 export function rewardStage(drill, rarity, random = Math.random) {

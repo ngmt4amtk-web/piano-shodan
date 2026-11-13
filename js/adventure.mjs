@@ -1,4 +1,4 @@
-import { scoreFrame, tightFrame, scorePages, MARKER_RADIUS } from "./score-frame.mjs";
+import { scoreFrame, tightFrame, scorePages, highlightNote, insertScoreLayer, addBassNames } from "./score-frame.mjs";
 import { Practice, noteName } from "./practice.mjs";
 import { childWords } from "./child-text.mjs";
 import { day } from "./state.mjs";
@@ -14,7 +14,7 @@ const B = (label, action, cls = "", extra = "") =>
   `<button type="button" class="${cls}" data-game="${action}" ${extra}>${label}</button>`;
 const TITLES = {
   play: "ピアノでひこう", mimic: "まねしてひこう", finger: "どのゆび？",
-  note: "この音、どこ？", listen: "どっちが高い？", rhythm: "リズムをたたこう", teacher: "先生に聞いてもらおう"
+  note: "この音を、ピアノでひこう", listen: "どっちが高い？", rhythm: "リズムをたたこう", teacher: "先生に聞いてもらおう"
 };
 const WHITE = [0, 2, 4, 5, 7, 9, 11, 12];
 const RULES = ["ミス5回でまけ", "速いほうが勝ち", "先生は左手だけ", "先生は目をつぶる", "先生はしゃべりながら", "1回だけやり直し"];
@@ -204,10 +204,8 @@ export class Adventure {
     const resume = this.a.resume?.id === drill.id ? this.a.resume : null;
     const questions = buildLesson(drill, previous);
     const branch = resume?.branch || this.a.branch;
-    if (branch === "rhythm") {
-      [questions[1], questions[5]] = [questions[5], questions[1]];
-      this.a.branch = null;
-    }
+    if (this.a.input === "teacher") this.a.input = "mic";
+    this.a.branch = null;
     this.lesson = { id: drill.id, drill, questions, branch, index: resume ? Math.max(0, Math.min(6, resume.index || 0)) : 0,
       combo: resume?.combo || 0, best: resume?.best || 0, correct: resume?.correct || 0 };
     this.a.introduced = true;
@@ -275,7 +273,7 @@ export class Adventure {
     this.persistLesson();
     window.scrollTo(0, 0);
     this.root.querySelector("h1")?.focus({ preventScroll: true });
-    if (["play", "mimic"].includes(q.type)) {
+    if (["play", "mimic", "note"].includes(q.type)) {
       if (this.a.input === "teacher") this.teacherFallback();
       else if (q.type === "mimic" && !resuming) await this.model(true);
       else await this.listenForNotes();
@@ -311,21 +309,33 @@ export class Adventure {
       const lastX = Math.max(...notes.map(n => n.x));
       const before = this.layout.notes.filter(n => n.x < firstX - .01);
       const after = this.layout.notes.filter(n => n.x > lastX + .01);
-      const left = before.length ? (Math.max(...before.map(n => n.x)) + firstX) / 2 : x;
-      const right = after.length ? (Math.min(...after.map(n => n.x)) + lastX) / 2 : x + w;
+      const left = before.length ? Math.min(firstX - 1.25, (Math.max(...before.map(n => n.x)) + firstX) / 2) : x;
+      const right = after.length ? Math.max(lastX + 1.25, (Math.min(...after.map(n => n.x)) + lastX) / 2) : x + w;
       svg.setAttribute("viewBox", `${left} ${y} ${right - left} ${h}`);
       svg.setAttribute("width", right - left);
       svg.setAttribute("height", h);
-      const ns = "http://www.w3.org/2000/svg";
+      const layer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      layer.classList.add("score-highlights");
       for (const n of notes) {
         const eventIndex = events.findIndex((e, i) => i >= chunk && e.m === n.m && Math.abs((e.gt ?? e.t) - n.t) < .0001);
         if (eventIndex > index) continue;
-        const circle = document.createElementNS(ns, "circle");
-        for (const [key, value] of Object.entries({ cx: n.x, cy: n.y, r: MARKER_RADIUS,
-          fill: eventIndex < index ? "#21a6a0" : "#ff735e", "fill-opacity": .4,
-          stroke: eventIndex < index ? "#147771" : "#bd3c2c", "stroke-width": .25 })) circle.setAttribute(key, value);
-        svg.append(circle);
+        layer.append(highlightNote(n, this.layout.staffLines, eventIndex < index));
       }
+      insertScoreLayer(svg, layer);
+      addBassNames(svg, notes, this.store.state.shodan.bassNames !== false, this.layout.staffLines);
+      svg.addEventListener("click", e => {
+        const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+        const nearest = notes.map(n => ({ n, d: Math.hypot(n.x - point.x, n.y - point.y) })).sort((a, b) => a.d - b.d)[0];
+        if (!nearest || nearest.d > 3) return;
+        const selected = events.findIndex((event, i) => i >= chunk && event.m === nearest.n.m && Math.abs((event.gt ?? event.t) - nearest.n.t) < .0001);
+        // もどってやり直す時だけ選べる。先の音へ飛んでクリアにはしない。
+        if (selected < 0 || selected > index) return;
+        if (this.practice && ["play", "mimic", "note"].includes(q.type)) {
+          this.practice.index = selected;
+          this.practice.holder?.reset();
+        }
+        this.paintScore(selected);
+      });
     }
     host.replaceChildren(svg);
     if (q.type === "teacher" && pages.length > 1) {
@@ -340,7 +350,7 @@ export class Adventure {
     host.removeAttribute("aria-label");
     const trail = this.root.querySelector("#note-trail");
     trail.dataset.index = index;
-    trail.innerHTML = visible.map((n, i) => `<span class="note-pebble ${chunk + i < index ? "played" : ""}" ${chunk + i === index ? 'aria-current="step"' : ""}>${chunk + i < index ? "✓" : q.type === "note" ? "？" : noteName(n.m)}</span>`).join("");
+    trail.innerHTML = visible.map((n, i) => `<span aria-label="${noteName(n.m)}" class="note-pebble ${chunk + i < index ? "played" : ""}" ${chunk + i === index ? 'aria-current="step"' : ""}>${chunk + i < index ? "✓" : ""}</span>`).join("");
     const target = events[index];
     const keyboard = this.root.querySelector("#question-controls .ad-keyboard");
     if (keyboard && target && !keyboard.querySelector(`[data-midi="${target.m}"]`)) {
@@ -357,17 +367,14 @@ export class Adventure {
   controls() {
     const q = this.q();
     const host = this.root.querySelector("#question-controls");
-    if (["play", "mimic"].includes(q.type)) {
+    if (["play", "mimic", "note"].includes(q.type)) {
       host.innerHTML = this.a.input === "keys" ? this.keys() :
-        `<div class="mic-listening"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>ピアノの音を聞くよ</span></div>${B("先生チェックにする", "fallback", "small-button")}`;
+        `<div class="mic-listening"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>マイク オン</span></div>${B("先生チェックにする", "fallback", "small-button")}`;
     } else if (q.type === "finger") {
       const correct = q.events[0].f || 1;
       const choices = [1, 2, 3, 4, 5].filter(n => n !== (correct === 5 ? 1 : 5));
       host.innerHTML = `<div class="finger-answers" role="group" aria-label="ゆびをえらぶ">${choices.map(n => B(`<strong>${n}</strong><span>${["", "おやゆび", "ひとさしゆび", "中ゆび", "くすりゆび", "小ゆび"][n]}</span>`, "answer:" + n, "finger-choice")).join("")}</div>`;
       this.setStatus("この音は、何ばんのゆび？");
-    } else if (q.type === "note") {
-      host.innerHTML = this.keys();
-      this.setStatus("楽ふの音を、けんばんでおそう。");
     } else if (q.type === "listen") {
       host.innerHTML = `<div class="listen-answers">${B("1こめ", "answer:first", "big-button")}${B("2こめ", "answer:second", "big-button")}</div>`;
     } else if (q.type === "rhythm") {
@@ -404,10 +411,16 @@ export class Adventure {
       input: this.a.input || "mic",
       onStatus: (text, kind) => {
         if (kind === "teacher") return this.teacherFallback();
-        if (kind === "wrong") { this.wrong("もう1回。音をさがそう。"); return; }
+        if (kind === "wrong") { this.wrong(text); return; }
+        if (kind === "mic-error") {
+          this.setStatus("先生チェックでも、つづけられるよ。", kind);
+          this.root.querySelector("#question-controls").innerHTML = `<p class="teacher-label">マイクがつかえません</p>${B("マイクをオンにする", "mic-retry", "big-button")}${B("先生チェックにする", "fallback", "small-button")}`;
+          return;
+        }
         if (kind === "loading") this.setStatus("マイクの用意中。先生チェックでもいけるよ。");
         else this.setStatus(this.a.input === "keys" ? "楽ふの音をひこう。" : "ピアノで、ひいてみよう。");
       },
+      onLevel: level => { const bars = this.root.querySelector(".sound-bars"); if (bars) bars.style.setProperty("--mic-level", Math.max(.15, level)); },
       onProgress: index => {
         this.paintScore(index);
         if (index > 0) this.sound("note");
@@ -449,7 +462,7 @@ export class Adventure {
     this.setStatus("こんどは、きみのばん。");
     if (stage) stage.dataset.phase = "waiting";
     this.root.querySelectorAll("#question-controls button").forEach(el => { el.disabled = false; });
-    if (["play", "mimic"].includes(q.type) || thenListen) await this.listenForNotes();
+    if (["play", "mimic", "note"].includes(q.type) || thenListen) await this.listenForNotes();
   }
   async listenPair() {
     const q = this.q();
@@ -595,13 +608,14 @@ export class Adventure {
     const notes = layout.notes.filter(n => this.battleEvents.some(e => n.m === e.m && Math.abs(n.t - (e.gt ?? e.t)) < .0001));
     const lastX = Math.max(...notes.map(n => n.x));
     const next = layout.notes.filter(n => n.x > lastX + .01);
-    const right = next.length ? (Math.min(...next.map(n => n.x)) + lastX) / 2 : layout.viewBox[0] + layout.viewBox[2];
+    const right = next.length ? Math.max(lastX + 1.25, (Math.min(...next.map(n => n.x)) + lastX) / 2) : layout.viewBox[0] + layout.viewBox[2];
     const [, y, , h] = tightFrame(layout, notes, false);
     svg.setAttribute("viewBox", `${layout.viewBox[0]} ${y} ${right - layout.viewBox[0]} ${h}`);
     svg.setAttribute("width", right - layout.viewBox[0]);
     svg.setAttribute("height", h);
     svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", `${childWords(this.battleDrill.title)}、はじめの4音`);
+    addBassNames(svg, notes, this.store.state.shodan.bassNames !== false, layout.staffLines);
     const host = this.root.querySelector(".battle-score");
     const mask = host.querySelector(".score-mask");
     host.replaceChildren(svg, mask);
@@ -613,7 +627,7 @@ export class Adventure {
       stage: { hand, metro: false }, piano: this.piano, input: "mic", bpm: 90,
       onStatus: (text, kind) => {
         const status = this.root.querySelector(".battle-mic-status");
-        if (status) status.textContent = kind === "teacher" ? "先生の○×でも、いけるよ。" : kind === "wrong" ? "もう1回、音をさがそう。" : "ピアノの音を聞いているよ。";
+        if (status) status.textContent = kind === "teacher" ? "先生の○×でも、いけるよ。" : kind === "mic-error" ? "マイクがつかえません。先生の○×でいこう。" : kind === "wrong" ? "もう1回、音をさがそう。" : "ピアノの音を聞いているよ。";
       },
       onProgress: index => {
         const score = this.root.querySelector(".battle-score");
@@ -794,7 +808,8 @@ export class Adventure {
       const d = next[kind === "rhythm-branch" && next.length > 1 ? 1 : 0];
       return this.navigate("lesson/" + d.id);
     }
-    if (kind === "fallback") { this.a.input = "teacher"; this.save(); return this.teacherFallback(); }
+    if (kind === "fallback") return this.teacherFallback();
+    if (kind === "mic-retry") { this.controls(); return this.listenForNotes(); }
     if (kind === "input") { this.a.input = value; this.save(); return this.renderQuestion(true); }
     if (kind === "model") return this.q().type === "listen" ? this.listenPair() : this.q().type === "rhythm" ? this.startRhythm() : this.model();
     if (kind === "repeat") return this.renderQuestion(true);

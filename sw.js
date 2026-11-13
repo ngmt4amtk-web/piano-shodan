@@ -1,4 +1,4 @@
-const VERSION = 'piano-shodan-5d1a3c9ce0682be88e638ce6c333b0d17588dd0fb7a45cae7512e90e6b57cf9b';
+const VERSION = 'piano-shodan-5b5990210f8e7739b6fdb1c3381891ca7adb68b91f4f8a5dcdc6605bd409fdfa';
 // Replaced by build/stamp.py; includes every deployed asset.
 const FILES = [
   "./adventure.css",

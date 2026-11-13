@@ -10,9 +10,9 @@ const ALL_KEYS = Array.from({ length: 88 }, (_, i) => i + 21);
 
 export class Practice {
   constructor({ drill, position, stage, piano, bpm, input, companion, count,
-    onStatus, onProgress, onEnd }) {
+    onStatus, onProgress, onEnd, onLevel }) {
     Object.assign(this, { drill, position, stage, piano, bpm, input, companion,
-      count, onStatus, onProgress, onEnd });
+      count, onStatus, onProgress, onEnd, onLevel });
     const events = position.events;
     this.events = stage.hand === "B" ?
       [...(events.R || []), ...(events.L || [])] : (events[stage.hand] || []);
@@ -50,7 +50,10 @@ export class Practice {
     }
     this.onStatus("マイクをよういしています。先生のボタンでもつづけられるよ。", "loading");
     try {
-      const mic = await createMic();
+      // マイクの許可や音の準備が終わらない時は、待ち続けずに「マイクをオンにする」ボタンを出す。
+      const opening = createMic();
+      const mic = await Promise.race([opening, new Promise((_, reject) => setTimeout(() => reject(Error("mic timeout")), 10000))])
+        .catch(error => { opening.then(late => late.close()).catch(() => {}); throw error; });
       if (token !== this.token || !this.active) {
         mic.close();
         return;
@@ -66,6 +69,7 @@ export class Practice {
           return;
         }
         const x = mic.read();
+        if (this.onLevel) this.onLevel(Math.min(1, Math.sqrt(x.reduce((sum, v) => sum + v * v, 0) / x.length) * 12));
         let det = detect(x, mic.sampleRate);
         // 移植元は150Hzから。周波数の単位だけ倍にして低いピアノ音も調べる。
         // pitch.js本体と判定の許容幅は変えない。
@@ -86,7 +90,7 @@ export class Practice {
       this.raf = requestAnimationFrame(frame);
     } catch {
       if (token !== this.token) return;
-      this.onStatus("マイクはつかえません。先生の「できた」でつづけられるよ。", "teacher");
+      this.onStatus("マイクがつかえません", "mic-error");
     }
   }
 

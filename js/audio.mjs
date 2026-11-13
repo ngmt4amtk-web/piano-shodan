@@ -202,7 +202,8 @@ export class Piano extends EventTarget {
     if (!this.context) this.createContext();
     if (!this.context) throw Error("音を出せません。もう一度ひらいてね。");
     try {
-      if (navigator.audioSession) navigator.audioSession.type = "playback";
+      // マイクを使っている間に "playback" にすると、iPhone はマイクの入力を止める。
+      if (navigator.audioSession) navigator.audioSession.type = this.micActive ? "play-and-record" : "playback";
       else if (!this.silent) {
         const a = new Uint8Array(8044),
           v = new DataView(a.buffer);

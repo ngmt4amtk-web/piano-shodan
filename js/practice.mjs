@@ -8,6 +8,70 @@ export function heardName(midi, target) {
 }
 const ALL_KEYS = Array.from({ length: 88 }, (_, i) => i + 21);
 
+// iPhone では、問題ごとにマイクと AudioContext を作り直すと、タップの外で
+// 音の部品が動き出さずに止まる。1回開いたマイクを、ピアノの音と同じ
+// 動いている AudioContext の上で使い回す（判定の pitch.js は変えない）。
+let shared = null;
+const withTimeout = (promise, ms, label) => Promise.race([promise,
+  new Promise((_, reject) => setTimeout(() => reject(Error(label)), ms))]);
+export function releaseMic() {
+  if (!shared) return;
+  const { stream, nodes, piano } = shared;
+  shared = null;
+  if (piano) piano.micActive = false;
+  stream.getTracks().forEach(track => { try { track.stop(); } catch {} });
+  nodes.forEach(node => { try { node.disconnect(); } catch {} });
+}
+async function openMic(piano) {
+  const live = shared && shared.stream.getAudioTracks().some(t => t.readyState === "live" && !t.muted);
+  if (live && shared.ctx === piano?.context && shared.ctx.state !== "closed") {
+    if (shared.ctx.state !== "running") await withTimeout(piano.unlock(), 3000, "mic resume");
+    return shared.handle;
+  }
+  releaseMic();
+  if (!piano) return createMic();
+  piano.micActive = true;
+  if (navigator.audioSession) navigator.audioSession.type = "play-and-record";
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+    echoCancellation: false, autoGainControl: false, noiseSuppression: false, channelCount: 1 } });
+  try {
+    await withTimeout(piano.unlock(), 3000, "mic resume");
+    const ctx = piano.context;
+    const src = ctx.createMediaStreamSource(stream);
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 90;
+    hp.Q.value = .707;
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0;
+    src.connect(hp);
+    hp.connect(analyser);
+    const buffer = new Float32Array(analyser.fftSize);
+    const handle = {
+      read() {
+        analyser.getFloatTimeDomainData(buffer);
+        return buffer.subarray(buffer.length - 2048);
+      },
+      sampleRate: ctx.sampleRate,
+      close() {} // 使い回すので、問題の終わりでは閉じない。
+    };
+    shared = { stream, ctx, nodes: [src, hp, analyser], handle, piano };
+    stream.getAudioTracks().forEach(track => track.addEventListener("ended", () => {
+      if (shared?.stream === stream) releaseMic();
+    }));
+    return handle;
+  } catch (error) {
+    shared = { stream, nodes: [], piano };
+    releaseMic();
+    throw error;
+  }
+}
+// 画面を離れたらマイクを放す（iPhone の背景では止まるため）。戻った時は次の問題で開き直す。
+if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => {
+  if (document.hidden) releaseMic();
+});
+
 export class Practice {
   constructor({ drill, position, stage, piano, bpm, input, companion, count,
     onStatus, onProgress, onEnd, onLevel }) {
@@ -51,7 +115,7 @@ export class Practice {
     this.onStatus("マイクをよういしています。先生のボタンでもつづけられるよ。", "loading");
     try {
       // マイクの許可や音の準備が終わらない時は、待ち続けずに「マイクをオンにする」ボタンを出す。
-      const opening = createMic();
+      const opening = openMic(this.piano);
       const mic = await Promise.race([opening, new Promise((_, reject) => setTimeout(() => reject(Error("mic timeout")), 10000))])
         .catch(error => { opening.then(late => late.close()).catch(() => {}); throw error; });
       if (token !== this.token || !this.active) {

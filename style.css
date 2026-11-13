@@ -1,11 +1,19 @@
 :root {
-  --paper: #f6f1e5;
-  --ink: #183c4e;
-  --muted: #536773;
-  --gold: #e1ae44;
-  --line: #d8d1c1;
-  --red: #c64e38;
-  --blue: #28789e;
+  --sheet: #fffdf8;
+  --accent: #e2452f;
+  --action-red: #c93926;
+  --highlight: #ffe14d;
+  --success: #2f8f5b;
+  --button-shadow: 0 4px 0 var(--ink);
+  --button-radius: 13px;
+  --rule: 2px solid var(--ink);
+  --paper: #f6f1e6;
+  --ink: #1f2430;
+  --muted: #5b6170;
+  --gold: var(--highlight);
+  --line: var(--ink);
+  --red: var(--accent);
+  --blue: var(--ink);
   --s1: 4px;
   --s2: 8px;
   --s3: 12px;
@@ -50,12 +58,12 @@ button {
   cursor: pointer;
   border: 1.5px solid var(--line);
   border-radius: 12px;
-  background: #fffdf7;
+  background: var(--sheet);
   padding: 10px 15px;
   font-weight: 700;
   line-height: 1.3;
   touch-action: manipulation;
-  box-shadow: 0 2px 0 #d7ceba;
+  box-shadow: 0 2px 0 var(--paper);
 }
 button:active {
   transform: translateY(1px);
@@ -64,8 +72,8 @@ button:active {
 button:disabled {
   cursor: default;
   box-shadow: none;
-  background: #e8e4d9;
-  color: #59646b;
+  background: var(--paper);
+  color: var(--muted);
 }
 button.primary {
   background: var(--ink);
@@ -74,11 +82,11 @@ button.primary {
 }
 button.gold {
   background: var(--gold);
-  border-color: #b9892f;
-  color: #17374a;
+  border-color: var(--muted);
+  color: var(--ink);
 }
 button.danger {
-  color: #a63526;
+  color: var(--ink);
 }
 button.quiet {
   background: transparent;
@@ -88,14 +96,14 @@ button.quiet {
 button.selected,
 button[aria-pressed="true"] {
   border-color: var(--ink);
-  background: #e5edf0;
+  background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--ink);
 }
 button:focus-visible,
 select:focus-visible,
 input:focus-visible,
 a:focus-visible {
-  outline: 3px solid #247d9b;
+  outline: 3px solid var(--muted);
   outline-offset: 3px;
 }
 button.small {
@@ -129,7 +137,7 @@ small,
   line-height: 1.5;
 }
 a {
-  color: #216a88;
+  color: var(--muted);
 }
 input[type="text"] {
   width: 100%;
@@ -137,7 +145,7 @@ input[type="text"] {
   padding: 10px;
   border: 1.5px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--sheet);
 }
 input[type="range"] {
   min-height: 44px;
@@ -150,7 +158,7 @@ select {
   max-width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fffdf7;
+  background: var(--sheet);
   padding: 7px;
 }
 label {
@@ -283,7 +291,7 @@ main {
 .statusline .dot {
   width: 6px;
   height: 6px;
-  background: #638b67;
+  background: var(--muted);
   border-radius: 50%;
 }
 .home-main {
@@ -294,7 +302,7 @@ main {
 .home-cover {
   position: relative;
   padding: 24px 28px;
-  background: #fffdf7;
+  background: var(--sheet);
   border: 1px solid var(--line);
   border-left: 5px solid var(--gold);
   border-radius: 4px;
@@ -302,7 +310,7 @@ main {
 .home-cover .kicker {
   font-size: 0.8rem;
   letter-spacing: 0.16em;
-  color: #796230;
+  color: var(--muted);
   margin-bottom: 16px;
 }
 .home-cover h2 {
@@ -347,7 +355,7 @@ main {
 }
 .step .num {
   font-size: 1.1rem;
-  color: #947237;
+  color: var(--muted);
 }
 .step span {
   font-size: 0.87rem;
@@ -365,8 +373,8 @@ main {
   width: 14px;
   height: 14px;
   border-radius: 3px;
-  border: 1px solid #ccc7bb;
-  background: #d9d7cf;
+  border: 1px solid var(--paper);
+  background: var(--paper);
 }
 .map-link {
   display: block;
@@ -403,8 +411,8 @@ main {
   min-height: 44px;
   padding: 7px 2px;
   border-radius: 8px;
-  background: #dfddd5;
-  border: 2px solid #ccc8bc;
+  background: var(--paper);
+  border: 2px solid var(--paper);
   box-shadow: none;
   position: relative;
   font-size: 0.8rem;
@@ -418,8 +426,8 @@ main {
   line-height: 1.1;
 }
 .tile.progress-0 {
-  background: #dfddd5;
-  border-color: #ccc8bc;
+  background: var(--paper);
+  border-color: var(--paper);
 }
 .tile.identified {
   background: color-mix(in srgb, var(--tile) 24%, white);
@@ -431,10 +439,10 @@ main {
 .tile.identified.independent {
   background: var(--tile);
   color: white;
-  text-shadow: 0 1px 1px #0006;
+  text-shadow: 0 1px 1px var(--ink);
 }
 .tile.settled {
-  outline: 3px solid #b78620;
+  outline: 3px solid var(--muted);
   outline-offset: 1px;
 }
 .tile.range-selected {
@@ -481,7 +489,7 @@ main {
   gap: 12px;
 }
 .star-text {
-  color: #967021;
+  color: var(--muted);
   white-space: nowrap;
   letter-spacing: 0.06em;
 }
@@ -533,7 +541,7 @@ main {
   width: 8px;
   height: 8px;
   border-radius: 1px;
-  background: #ddd9ce;
+  background: var(--paper);
 }
 .occurrence-strip span.here {
   background: var(--ink);
@@ -548,7 +556,7 @@ main {
 }
 .score-scroll {
   background: white;
-  border: 1px solid #d6d7cf;
+  border: 1px solid var(--paper);
   border-radius: 6px;
   overflow-y: auto;
   overflow-x: clip;
@@ -601,15 +609,15 @@ main {
 .stage .star {
   display: block;
   font-size: 1rem;
-  color: #946f1e;
+  color: var(--muted);
 }
 .stage.chosen {
   background: var(--ink);
-  color: #fff;
+  color: var(--sheet);
   border-color: var(--ink);
 }
 .stage.chosen .star {
-  color: #ffcf65;
+  color: var(--paper);
 }
 .stage small {
   display: block;
@@ -648,7 +656,7 @@ main {
 }
 .count-number {
   font-size: 2rem;
-  color: #8d661c;
+  color: var(--muted);
   font-weight: 800;
   text-align: center;
 }
@@ -691,8 +699,8 @@ main {
   flex-wrap: wrap;
 }
 .review-panel {
-  background: #f8e6b5;
-  border: 1px solid #d5b66b;
+  background: var(--paper);
+  border: 1px solid var(--highlight);
   border-radius: 8px;
   padding: 12px;
   display: grid;
@@ -705,7 +713,7 @@ main {
   font-size: 0.8rem;
 }
 .forced .topbar {
-  background: #183c4e;
+  background: var(--ink);
   color: white;
 }
 .forced .topbar button {
@@ -713,7 +721,7 @@ main {
 }
 .forced-timer {
   font-size: 2rem;
-  color: #ffe1a0;
+  color: var(--paper);
   font-variant-numeric: tabular-nums;
 }
 .forced .practice-controls .stage-buttons,
@@ -752,9 +760,9 @@ main {
   padding-top: 0;
 }
 .key {
-  border: 1px solid #b9b5ab;
+  border: 1px solid var(--paper);
   border-radius: 0 0 7px 7px;
-  box-shadow: 0 3px 0 #c8c3b8;
+  box-shadow: 0 3px 0 var(--paper);
   touch-action: none;
   font-size: 0.8rem;
   padding: 0 0 10px;
@@ -777,7 +785,7 @@ main {
   min-height: 44px;
   background: var(--ink);
   color: white;
-  border-color: #102b39;
+  border-color: var(--ink);
   padding-bottom: 8px;
   font-size: 0.7rem;
 }
@@ -820,7 +828,7 @@ main {
 .result {
   padding: 28px;
   text-align: center;
-  background: #fffdf7;
+  background: var(--sheet);
   border: 2px solid var(--gold);
   border-radius: 12px;
 }
@@ -852,7 +860,7 @@ main {
 .gacha-orb {
   width: 120px;
   height: 120px;
-  background: #e9b747;
+  background: var(--highlight);
   border: 5px solid var(--ink);
   border-radius: 50%;
   margin: 16px auto;
@@ -865,7 +873,7 @@ main {
   max-width: 350px;
   margin: 0 auto;
   text-align: center;
-  background: #fffdf7;
+  background: var(--sheet);
   border: 3px solid var(--gold);
   border-radius: 12px;
   padding: 24px;
@@ -882,7 +890,7 @@ main {
   gap: 12px;
 }
 .collect-card {
-  background: #fffdf7;
+  background: var(--sheet);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 16px;
@@ -931,7 +939,7 @@ main {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #e5dfd3;
+  border-bottom: 1px solid var(--paper);
 }
 .forecast-row span:last-child {
   text-align: right;
@@ -939,20 +947,20 @@ main {
 }
 .history-row {
   padding: 8px 0;
-  border-bottom: 1px solid #e5dfd3;
+  border-bottom: 1px solid var(--paper);
   font-size: 0.85rem;
 }
 .notice {
   padding: 12px;
-  border: 1px solid #c3ad73;
-  background: #fff3d3;
+  border: 1px solid var(--highlight);
+  background: var(--paper);
   border-radius: 8px;
   margin: 12px 0;
 }
 .error {
   padding: 20px;
-  background: #fff5e5;
-  border: 1px solid #b78635;
+  background: var(--sheet);
+  border: 1px solid var(--muted);
   border-radius: 8px;
 }
 .boot {
@@ -977,7 +985,7 @@ dialog {
   color: var(--ink);
 }
 dialog::backdrop {
-  background: #142f3c88;
+  background: var(--ink);
 }
 dialog h2 {
   margin-bottom: 12px;
@@ -1026,7 +1034,7 @@ dialog .flex {
 .save-warning {
   font-size: 0.75rem;
   padding: 8px;
-  background: #ffedbc;
+  background: var(--paper);
 }
 .lesson-end {
   border-left: 4px solid var(--gold);
@@ -1447,7 +1455,7 @@ button {
   background: var(--paper);
 }
 .forced .topbar .eyebrow {
-  color: #d0dde4;
+  color: var(--paper);
 }
 @media (max-width: 360px) {
   .topbar:has(+ main.practice) .eyebrow {
@@ -1661,12 +1669,12 @@ dialog {
   top: 4px;
   left: 8px;
   font-size: 0.75rem;
-  background: #fff3d3;
+  background: var(--paper);
   padding: 2px 6px;
   z-index: 1;
 }
 #save-banner {
-  background: #ffedbc;
+  background: var(--paper);
   padding: 4px 12px;
   display: flex;
   align-items: center;
@@ -1958,3 +1966,21 @@ dialog {
     gap: 8px;
   }
 }
+
+/* Notebook materials: paper, ink, and one red annotation. */
+body, .topbar, .practice { background: var(--paper); }
+body { font-family: "Hiragino Sans", "BIZ UDPGothic", sans-serif; }
+button, select, input[type="text"], input[type="number"] {
+  border: var(--rule); border-radius: var(--button-radius); background: var(--paper);
+}
+button { box-shadow: var(--button-shadow); min-height: 44px; }
+button:active { transform: translateY(4px); box-shadow: none; }
+button.primary, .play-button { background: var(--accent); color: var(--ink); border-color: var(--ink); }
+button.selected, button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); box-shadow: var(--button-shadow); }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline-color: var(--ink); }
+h1, h2, h3 { text-align: left; font-weight: 800; }
+a { color: var(--ink); text-decoration-thickness: 2px; }
+.score-scroll, .score-wrap, .reward-card, .collect-card { border: 0; border-radius: 0; box-shadow: none; background: var(--sheet); }
+.settings section { border-bottom: var(--rule); }
+dialog { border: 0; border-radius: 0; background: var(--paper); color: var(--ink); box-shadow: none; }
+#toast { background: var(--ink); color: var(--sheet); border-radius: 0; box-shadow: none; }

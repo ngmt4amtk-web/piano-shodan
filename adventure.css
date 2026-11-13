@@ -1,12 +1,11 @@
 :root {
-  --sky: #e9f7ff;
-  --ink: #293b50;
-  --coral: #f36a52;
-  --coral-dark: #b94436;
-  --teal: #158a87;
-  --cream: #fffdf6;
-  --gold: #ffcc57;
-  --purple: #9971d8;
+  --sky: var(--paper);
+  --coral: var(--accent);
+  --coral-dark: var(--ink);
+  --teal: var(--success);
+  --cream: var(--sheet);
+  --gold: var(--highlight);
+  --purple: var(--muted);
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -43,7 +42,7 @@ summary {
 
 .adventure button,
 body[data-screen="gacha"] button {
-  border: 2px solid #c5d7df;
+  border: 2px solid var(--paper);
   border-bottom-width: 5px;
   border-radius: 16px;
   background: white;
@@ -69,7 +68,7 @@ body[data-screen="gacha"] button {
 .adventure input:focus-visible,
 .adventure summary:focus-visible,
 .adventure textarea:focus-visible {
-  outline: 3px solid #205dc5;
+  outline: 3px solid var(--muted);
   outline-offset: 4px;
 }
 
@@ -77,7 +76,7 @@ body[data-screen="gacha"] button {
 .adventure .light-button,
 body[data-screen="gacha"] .primary {
   min-height: 56px;
-  background: #c94d3c;
+  background: var(--accent);
   border-color: var(--coral-dark);
   color: white;
   font-size: 1.125rem;
@@ -86,11 +85,11 @@ body[data-screen="gacha"] .primary {
 .adventure .light-button {
   background: var(--cream);
   color: var(--ink);
-  border-color: #c7d8df;
+  border-color: var(--paper);
 }
 
 .adventure .small-button {
-  background: #fffdf8;
+  background: var(--sheet);
   font-size: .875rem;
   padding: 6px 12px;
 }
@@ -108,7 +107,7 @@ body[data-screen="gacha"] .primary {
   min-height: 72px;
   padding: 8px max(16px, env(safe-area-inset-left));
   background: var(--cream);
-  border-bottom: 3px solid #d0e5ec;
+  border-bottom: 3px solid var(--paper);
 }
 
 .ad-header > * {
@@ -143,7 +142,7 @@ body[data-screen="gacha"] .primary {
 }
 
 .mini-xp {
-  color: #8b570b;
+  color: var(--ink);
   white-space: nowrap;
 }
 
@@ -158,7 +157,7 @@ body[data-screen="gacha"] .primary {
 .weekly-streak small {
   display: block;
   font-size: .625rem;
-  color: #526676;
+  color: var(--muted);
 }
 
 .streak-mark {
@@ -221,7 +220,7 @@ body[data-screen="gacha"] .primary {
   display: block;
   width: 100%;
   min-height: 48px;
-  border: 2px solid #becfd8;
+  border: 2px solid var(--paper);
   border-radius: 12px;
   padding: 8px 12px;
   margin-top: 8px;
@@ -248,38 +247,38 @@ body[data-screen="gacha"] .primary {
   gap: 8px;
   font-size: .8125rem;
   margin: 8px 8px 24px;
-  color: #567383;
+  color: var(--muted);
 }
 
 .map-counter {
   padding: 2px 8px;
   border-radius: 8px;
-  background: #d5edf7;
+  background: var(--paper);
 }
 
 .trail-world {
   --world: var(--coral);
   --world-dark: var(--coral-dark);
-  --world-light: #ffddd2;
+  --world-light: var(--paper);
   scroll-margin-top: 80px;
 }
 
 .world-purple {
-  --world: #9b74d7;
-  --world-dark: #6e489f;
-  --world-light: #ebdefa;
+  --world: var(--paper);
+  --world-dark: var(--muted);
+  --world-light: var(--sheet);
 }
 
 .world-gold {
-  --world: #f2b943;
-  --world-dark: #a06d1a;
-  --world-light: #fff1bc;
+  --world: var(--highlight);
+  --world-dark: var(--muted);
+  --world-light: var(--paper);
 }
 
 .world-blue {
-  --world: #489cce;
-  --world-dark: #25618f;
-  --world-light: #ceeafd;
+  --world: var(--muted);
+  --world-dark: var(--muted);
+  --world-light: var(--paper);
 }
 
 .world-banner {
@@ -289,7 +288,7 @@ body[data-screen="gacha"] .primary {
   padding: 16px;
   border-radius: 18px;
   background: var(--world);
-  color: #fff;
+  color: var(--sheet);
   border-bottom: 5px solid var(--world-dark);
 }
 
@@ -321,19 +320,19 @@ body[data-screen="gacha"] .primary {
 }
 
 .world-coral .world-banner {
-  color: #431d17;
+  color: var(--ink);
 }
 
 .world-purple .world-banner {
-  color: #28183c;
+  color: var(--ink);
 }
 
 .world-gold .world-banner {
-  color: #624318;
+  color: var(--ink);
 }
 
 .world-blue .world-banner {
-  color: #092231;
+  color: var(--ink);
 }
 
 .trail {
@@ -350,7 +349,7 @@ body[data-screen="gacha"] .primary {
   height: calc((var(--steps) - 1) * 124px + 28px);
   overflow: visible;
   fill: none;
-  stroke: #c4e1e9;
+  stroke: var(--paper);
   stroke-linecap: round;
   stroke-width: 18;
 }
@@ -377,10 +376,10 @@ body[data-screen="gacha"] .primary {
   border-radius: 50%;
   border: 5px solid white;
   border-bottom-width: 5px;
-  outline: 3px solid #bfdde7;
-  background: #d2e5ed;
-  box-shadow: 0 8px 0 #9abac8;
-  color: #5b7886;
+  outline: 3px solid var(--paper);
+  background: var(--paper);
+  box-shadow: 0 8px 0 var(--paper);
+  color: var(--muted);
   font-size: 2rem;
 }
 
@@ -402,7 +401,7 @@ body[data-screen="gacha"] .primary {
   font-size: .6875rem;
   max-width: 104px;
   line-height: 1.4;
-  color: #435f6c;
+  color: var(--muted);
 }
 
 .map-buddy {
@@ -425,7 +424,7 @@ body[data-screen="gacha"] .primary {
   display: block;
   padding: 12px 16px;
   background: white;
-  border: 2px solid #c4dce6;
+  border: 2px solid var(--paper);
   border-radius: 16px;
   color: var(--ink);
   font-size: .9375rem;
@@ -441,8 +440,8 @@ body[data-screen="gacha"] .primary {
   height: 14px;
   rotate: 45deg;
   background: white;
-  border-right: 2px solid #c4dce6;
-  border-bottom: 2px solid #c4dce6;
+  border-right: 2px solid var(--paper);
+  border-bottom: 2px solid var(--paper);
 }
 
 .map-buddy .bubble {
@@ -475,7 +474,7 @@ body[data-screen="gacha"] .primary {
   background: var(--cream);
   border: 3px solid var(--world);
   border-radius: 18px;
-  box-shadow: 0 6px 0 #b7cdd8;
+  box-shadow: 0 6px 0 var(--paper);
   text-align: left;
 }
 
@@ -606,7 +605,7 @@ body[data-screen="gacha"] .primary {
   content: "";
   position: absolute;
   inset: 40px calc(50% - 10px);
-  border-left: 14px dotted #b8d9e6;
+  border-left: 14px dotted var(--paper);
 }
 
 .song-landmark {
@@ -625,10 +624,10 @@ body[data-screen="gacha"] .primary {
   width: 180px;
   padding: 0 12px 12px;
   border: 0;
-  border-bottom: 6px solid #bb8a4d;
+  border-bottom: 6px solid var(--muted);
   border-radius: 45%;
-  background: #ffdda0;
-  color: #60452b;
+  background: var(--paper);
+  color: var(--ink);
   font-size: .875rem;
 }
 
@@ -667,7 +666,7 @@ body[data-screen="gacha"] .primary {
   gap: 8px;
   background: var(--cream);
   padding: 8px 12px;
-  border-top: 3px solid #d0e5ec;
+  border-top: 3px solid var(--paper);
 }
 
 .map-nav button {
@@ -683,8 +682,8 @@ body[data-screen="gacha"] .primary {
 
 .sh-clock {
   min-height: 44px;
-  background: #f8fcfe;
-  border-color: #ccdde5;
+  background: var(--sheet);
+  border-color: var(--paper);
   font-size: .6875rem;
 }
 
@@ -733,7 +732,7 @@ body[data-screen="gacha"] .primary {
   flex: 1;
   height: 22px;
   border-radius: 12px;
-  background: #c7e2ec;
+  background: var(--paper);
   padding: 3px;
 }
 
@@ -746,7 +745,7 @@ body[data-screen="gacha"] .primary {
 }
 
 .combo {
-  color: #96590b;
+  color: var(--muted);
   white-space: nowrap;
 }
 
@@ -768,7 +767,7 @@ body[data-screen="gacha"] .primary {
 
 .question-caption {
   font-size: .8125rem;
-  color: #516c7b;
+  color: var(--muted);
   margin-bottom: 8px;
 }
 
@@ -781,7 +780,7 @@ body[data-screen="gacha"] .primary {
   padding: 20px 12px;
   background: var(--cream);
   border-radius: 20px;
-  border: 2px solid #cfdfdf;
+  border: 2px solid var(--paper);
 }
 
 .question-score svg {
@@ -804,18 +803,18 @@ body[data-screen="gacha"] .primary {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #cee5ef;
-  color: #416679;
+  background: var(--paper);
+  color: var(--muted);
   font-size: .75rem;
 }
 
 .note-pebble.played {
-  background: #b9e9df;
-  color: #155e5b;
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .note-pebble[aria-current] {
-  background: #ffe14d;
+  background: var(--highlight);
   outline: none;
 }
 
@@ -827,11 +826,11 @@ body[data-screen="gacha"] .primary {
 }
 
 #question-status[data-kind="wrong"] {
-  border-bottom: 3px solid #b44343;
+  border-bottom: 3px solid var(--accent);
 }
 
 #question-status[data-kind="correct"] {
-  color: #156b61;
+  color: var(--ink);
 }
 
 .question-tools {
@@ -927,7 +926,7 @@ body[data-screen="gacha"] .primary {
 
 .teacher-label {
   text-align: center;
-  color: #526c78;
+  color: var(--muted);
   font-size: .75rem;
 }
 
@@ -938,9 +937,9 @@ body[data-screen="gacha"] .primary {
   width: 100%;
   height: 120px;
   gap: 3px;
-  border: 5px solid #344357;
+  border: 5px solid var(--ink);
   border-radius: 14px;
-  background: #344357;
+  background: var(--ink);
   padding: 0;
   overflow: hidden;
 }
@@ -951,7 +950,7 @@ body[data-screen="gacha"] .primary {
   min-width: 0;
   height: 110px;
   border: 0;
-  border-bottom: 6px solid #cdd1d1;
+  border-bottom: 6px solid var(--paper);
   border-radius: 0 0 8px 8px;
   padding: 0 0 6px;
   background: var(--cream);
@@ -970,10 +969,10 @@ body[data-screen="gacha"] .primary {
   min-height: 44px;
   left: calc(var(--black) * 12.5% - 4%);
   border: 0;
-  border-bottom: 5px solid #141e2d;
+  border-bottom: 5px solid var(--ink);
   padding: 0;
   border-radius: 0 0 6px 6px;
-  background: #35475e;
+  background: var(--ink);
 }
 
 .adventure .key-hint {
@@ -991,7 +990,7 @@ body[data-screen="gacha"] .primary {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #b4d5e2;
+  background: var(--paper);
 }
 
 .beat-dots .beat-hit {
@@ -1052,14 +1051,14 @@ body[data-screen="gacha"] .primary {
 }
 
 .finish-numbers span {
-  color: #647b88;
+  color: var(--muted);
   font-size: .875rem;
 }
 
 .finish-numbers strong {
   display: block;
   font-size: 2.25rem;
-  color: #ad600d;
+  color: var(--muted);
 }
 
 .finish-line {
@@ -1067,7 +1066,7 @@ body[data-screen="gacha"] .primary {
 }
 
 .auto-label {
-  color: #647b88;
+  color: var(--muted);
   font-size: .75rem;
 }
 
@@ -1087,7 +1086,7 @@ body[data-screen="gacha"] .primary {
 .rest-seconds {
   display: block;
   font-size: 2.5rem;
-  color: #617d90;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1114,7 +1113,7 @@ body[data-screen="gacha"] .primary {
 }
 
 .eyebrow {
-  color: #a84131;
+  color: var(--ink);
   letter-spacing: .14em;
   font-size: .75rem;
 }
@@ -1130,8 +1129,8 @@ body[data-screen="gacha"] .primary {
 }
 
 .adventure .rule-choices .selected {
-  background: #fff0bd;
-  border-color: #b68520;
+  background: var(--paper);
+  border-color: var(--muted);
 }
 
 .custom-rule-label {
@@ -1146,7 +1145,7 @@ body[data-screen="gacha"] .primary {
 
 .boss-fineprint {
   font-size: .75rem;
-  color: #4d6979;
+  color: var(--muted);
 }
 
 .battle-hud {
@@ -1178,7 +1177,7 @@ body[data-screen="gacha"] .primary {
   border: 3px solid var(--coral-dark);
   border-radius: 50%;
   background: white;
-  color: #ad352a;
+  color: var(--ink);
   font-size: 1.75rem;
   font-variant-numeric: tabular-nums;
 }
@@ -1200,7 +1199,7 @@ body[data-screen="gacha"] .primary {
   position: absolute;
   left: 50%;
   translate: -50% 0;
-  color: #d5533e;
+  color: var(--accent);
   rotate: -12deg;
   font-size: 1.5rem;
   font-style: italic;
@@ -1264,7 +1263,7 @@ body[data-screen="gacha"] .primary {
   inset: 0;
   display: grid;
   place-items: center;
-  background: #ffe5b1;
+  background: var(--paper);
   border-radius: 16px;
 }
 
@@ -1290,8 +1289,8 @@ body[data-screen="gacha"] .primary {
   display: block;
   min-height: 44px;
   margin: 12px auto 0;
-  background: #fff2c5;
-  border-color: #c28d21;
+  background: var(--paper);
+  border-color: var(--muted);
   font-size: .875rem;
 }
 
@@ -1315,16 +1314,16 @@ body[data-screen="gacha"] .primary {
   display: grid;
   place-items: center;
   height: 52px;
-  border: 2px dashed #a6c4d3;
+  border: 2px dashed var(--paper);
   border-radius: 12px;
   font-size: .875rem;
 }
 
 .compose-slots .filled {
   border-style: solid;
-  border-color: #bf673f;
-  background: #ffdb9b;
-  color: #794e2f;
+  border-color: var(--accent);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .compose-status {
@@ -1377,7 +1376,7 @@ body[data-screen="gacha"] .primary {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #506c7c;
+  color: var(--muted);
 }
 
 .empty-illustration img {
@@ -1394,11 +1393,11 @@ body[data-screen="gacha"] .primary {
   display: flex;
   gap: 12px;
   padding: 16px 0;
-  border-bottom: 2px solid #c6e0ea;
+  border-bottom: 2px solid var(--paper);
 }
 
 .discovery-star {
-  color: #a5680e;
+  color: var(--muted);
 }
 
 .adventure .saved-composition {
@@ -2230,8 +2229,8 @@ body[data-screen="gacha"] {
 .lesson-main .input-options { position: relative; }
 .lesson-main .input-options[open] > div {
   position: absolute; bottom: 44px; right: 0; z-index: 25;
-  width: min(280px, 80vw); padding: 8px; border: 2px solid #c4dce6;
-  border-radius: 12px; background: var(--cream); box-shadow: 0 4px 12px #293b5033;
+  width: min(280px, 80vw); padding: 8px; border: 2px solid var(--paper);
+  border-radius: 12px; background: var(--cream); box-shadow: var(--button-shadow);
 }
 .lesson-main .input-options[open] > div button { width: 100%; min-height: 44px; }
 @media (max-height: 440px) and (orientation: landscape) {
@@ -2265,7 +2264,7 @@ body[data-screen="gacha"] {
 .gacha-main .gacha-range p { margin: 0 0 8px; }
 .gacha-main .gacha-chapters { display: flex; flex-wrap: wrap; gap: 6px; }
 .gacha-main .gacha-chapters button { width: 48px; height: 48px; min-width: 0; padding: 0; border-radius: 50%; }
-.gacha-main .gacha-chapters button.selected { background: #3158b7; color: white; }
+.gacha-main .gacha-chapters button.selected { background: var(--muted); color: white; }
 .gacha-main .sh-gacha-choice { display: grid; gap: 8px; }
 .gacha-main .sh-gacha-result { margin: 0; min-height: 0; }
 .gacha-main .sh-gacha-tools { margin-top: 12px; }
@@ -2274,4 +2273,153 @@ body[data-screen="gacha"] {
   .gacha-main .gacha-range { margin: 4px 0; }
   .gacha-main .sh-gacha-choice { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
   .gacha-main .sh-gacha-tools { margin-top: 4px; }
+}
+
+/* Piano practice notebook — screen-specific hierarchy. */
+:root {
+  --world-coral: #d8b4a6;
+  --world-purple: #c5bdd1;
+  --world-gold: #d6c698;
+  --world-blue: #b6c8cc;
+}
+.adventure { background: var(--paper); font-weight: 600; }
+.adventure button, body[data-screen="gacha"] button {
+  border: var(--rule); border-radius: var(--button-radius);
+  background: var(--paper); color: var(--ink); box-shadow: var(--button-shadow);
+  transition: none;
+}
+.adventure button:active, body[data-screen="gacha"] button:active {
+  translate: none; transform: translateY(4px); border-bottom-width: 2px; box-shadow: none;
+}
+.adventure .big-button, body[data-screen="gacha"] .primary {
+  background: var(--accent); color: white; border-color: var(--ink); font-size: 18px;
+  /* White/red is reserved for large, bold button labels. */
+  font-weight: 800;
+}
+.adventure .light-button, .adventure .small-button { background: var(--paper); border-color: var(--ink); }
+.ad-header { background: var(--paper); border-bottom: var(--rule); }
+.ad-header > .ad-wordmark { text-align: left; font-weight: 800; }
+.adventure .gear, .adventure .header-gacha, .adventure .art-button {
+  background: transparent; border: 0; box-shadow: none;
+}
+.mini-xp, .combo, .map-counter { color: var(--ink); font-variant-numeric: tabular-nums; }
+.map-counter { border-radius: 0; padding: 0 0 2px; border-bottom: var(--rule); background: transparent; font-weight: 800; }
+.map-main > h1 { text-align: left; font-size: 30px; font-weight: 800; }
+.map-motto { margin-inline: 0; color: var(--muted); }
+.trail-world { --world: var(--world-coral); }
+.world-purple { --world: var(--world-purple); }
+.world-gold { --world: var(--world-gold); }
+.world-blue { --world: var(--world-blue); }
+.world-banner, .world-coral .world-banner, .world-purple .world-banner,
+.world-gold .world-banner, .world-blue .world-banner {
+  border: 0; border-radius: 0; background: var(--world); color: var(--ink); padding: 14px 16px;
+}
+.world-number { width: auto; height: auto; border: 0; border-radius: 0; font-size: 52px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.06em; }
+.world-banner h2 { font-size: 19px; }
+.world-banner small { font-size: 10px; }
+.trail-line { stroke: var(--ink); stroke-width: 5; stroke-dasharray: 10 12; stroke-linecap: butt; }
+.adventure .step { border: 3px solid var(--ink); outline: none; background: var(--sheet); color: var(--ink); box-shadow: var(--button-shadow); border-radius: 50%; }
+.adventure .step.current { background: var(--accent); color: var(--sheet); outline: none; box-shadow: var(--button-shadow); }
+.adventure .step.completed { background: var(--ink); color: var(--sheet); outline: none; box-shadow: var(--button-shadow); }
+.step-name, .question-caption, .teacher-label, .weekly-streak small { color: var(--muted); }
+.bubble, .bubble::after { background: var(--sheet); border: 0; box-shadow: none; }
+.bubble { border-radius: 0; text-align: left; }
+.step-ticket { background: var(--sheet); border: 0; border-radius: 0; box-shadow: none; }
+.adventure .boss-door { background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+.buddy-portrait, .boss-intro-art, .fighter { background: transparent; border: 0; border-radius: 0; box-shadow: none; object-fit: contain; }
+.trail-chest { left: 0; }
+.scenery-one { left: 0; }
+.scenery-two { right: 0; }
+.map-nav { background: var(--paper); border-top: var(--rule); }
+.lesson-main > h1 { font-size: 27px; font-weight: 800; text-align: left; line-height: 1.35; }
+.lesson-top, .finish-numbers, .rest-seconds, .battle-time { font-variant-numeric: tabular-nums; }
+.lesson-progress { height: 16px; border: var(--rule); border-radius: 0; background: var(--sheet); padding: 0; }
+.lesson-progress span { background: var(--accent); border-radius: 0; }
+.question-score, .battle-score { background: var(--sheet); border: 0; border-radius: 0; box-shadow: none; }
+.note-pebble { background: transparent; border-radius: 0; color: var(--muted); }
+.note-pebble.played { background: transparent; color: var(--ink); border-bottom: 3px solid var(--success); }
+.note-pebble[aria-current] { background: var(--highlight); color: var(--ink); }
+.mic-listening { justify-content: flex-start; gap: 8px; color: var(--ink); }
+.mic-listening::before { content: ""; width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: var(--accent); }
+.sound-bars i { background: var(--accent); }
+.teacher-answers > button { min-height: 64px; }
+.question-tools { justify-content: flex-start; }
+#question-controls > .small-button { margin-inline: 0; }
+#question-status { text-align: left; }
+.adventure .tap-drum { background: var(--accent); color: var(--ink); border-color: var(--ink); box-shadow: var(--button-shadow); }
+.adventure .piano-white { border-radius: 0 0 4px 4px; background: var(--sheet); border-color: var(--ink); box-shadow: none; }
+.adventure .piano-black { background: var(--ink); color: var(--sheet); border-color: var(--ink); border-radius: 0 0 4px 4px; box-shadow: none; }
+.sh-gacha-result { background: transparent; border-radius: 0; border-top: var(--rule); text-align: left; padding: 20px 0; }
+.gacha-main .gacha-chapters button { border-radius: var(--button-radius); }
+.gacha-main .gacha-chapters button.selected { background: var(--ink); color: var(--sheet); }
+.gacha-main .sh-rarity { color: var(--accent); font-size: 36px; }
+.lesson-main .input-options[open] > div { border: 0; border-radius: 0; background: var(--sheet); box-shadow: none; }
+.bouncing, .wiggle, .just-completed, .question-correct .buddy-portrait { animation: none; }
+@media (max-height: 440px) and (orientation: landscape) {
+  .lesson-main > h1 { font-size: 26px; }
+  .gacha-main .sh-rarity { font-size: 30px; }
+}
+@media (max-width: 350px) {
+  .adventure button { padding-inline: 10px; }
+  .lesson-main > h1 { font-size: 26px; }
+  .teacher-answers { gap: 8px; }
+  .teacher-answers > button { padding-inline: 6px; font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+/* Keep white labels legible while the red annotations retain the original hue. */
+.adventure .big-button, body[data-screen="gacha"] .primary { background: var(--action-red); }
+.sh-clock { background: var(--paper); border-top: var(--rule); }
+.sh-clock button { border: var(--rule); border-radius: var(--button-radius); box-shadow: none; }
+.streak-mark { background: var(--action-red); border-radius: 0; }
+.world-number { flex: 0 0 auto; white-space: nowrap; }
+.world-banner > span:last-child { flex-shrink: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 350px) {
+  .world-banner { padding: 12px; gap: 10px; }
+  .world-number { font-size: 44px; }
+  .world-banner h2 { font-size: 17px; }
+}
+.sh-rarity, .gacha-main .sh-rarity { color: var(--action-red); }
+body { font-family: "Hiragino Sans", "BIZ UDPGothic", system-ui, sans-serif; }
+.adventure .step.current, .adventure .tap-drum { background: var(--action-red); color: white; }
+.question-score svg text, .drill-svg text { fill: var(--ink); }
+.adventure .step:active, .adventure .tap-drum:active {
+  transform: translateY(4px); translate: none; box-shadow: none;
+}
+.bass-name { fill: var(--ink); }
+
+/* 道の破線が練習の名前に重ならないよう、名前の下に紙色を敷く。 */
+.step-name, .boss-step-caption {
+  position: relative;
+  z-index: 2;
+  background: var(--paper, #f6f1e6);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+/* 楽ふの下の進み具合: まだの音は小さな白丸、今の音は黄色、ひけた音は✓。 */
+.lesson-main .note-pebble {
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: #fffdf8;
+}
+.lesson-main .note-pebble[aria-current] { background: #ffe14d; }
+.lesson-main .note-pebble.played { background: var(--ink); color: #fffdf8; }
+
+/* 低い横画面: 固い影の分だけ増えた高さを、すき間で取り戻す。 */
+@media (orientation: landscape) and (max-height: 440px) {
+  .lesson-main > h1, .lesson-main h1 { margin: 2px 0; font-size: 1.05rem; line-height: 1.2; }
+  .lesson-main .question-tools { gap: 4px; }
+  .lesson-main .question-tools button { box-shadow: 0 2px 0 var(--ink); }
+  .lesson-main .input-options summary { min-height: 32px; padding-block: 4px; }
+}
+
+/* 小さい縦画面: 大きな題と固い影の分を詰め、操作を固定帯の上に収める。 */
+@media (orientation: portrait) and (max-height: 700px) {
+  .lesson-main > h1, .lesson-main h1 { font-size: 1.25rem; margin: 2px 0 4px; line-height: 1.25; }
+  .lesson-main .question-tools { gap: 6px; margin-top: 6px; }
+  .lesson-main .question-tools button { box-shadow: 0 2px 0 var(--ink); }
+  .lesson-main .input-options summary { min-height: 32px; padding-block: 4px; }
+  .lesson-main .note-trail { padding-block: 2px; }
 }

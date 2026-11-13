@@ -1,31 +1,28 @@
 :root {
   color-scheme: light;
-  --ink: #202839;
-  --muted: #566173;
-  --line: #dce1e9;
-  --accent: #3158b7;
-  --bg: #fff;
+  --line: var(--ink);
+  --bg: var(--paper);
   font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
   color: var(--ink);
-  background: #fff;
+  background: var(--sheet);
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; padding-bottom: calc(48px + env(safe-area-inset-bottom)); background: #fff; }
+body { margin: 0; padding-bottom: calc(48px + env(safe-area-inset-bottom)); background: var(--sheet); }
 #app { min-height: calc(100svh - 48px); }
 button, input, select { font: inherit; }
 button, select { min-height: 44px; }
 button { border-radius: 8px; box-shadow: none; }
 button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible {
-  outline: 3px solid #3158b7;
+  outline: 3px solid var(--muted);
   outline-offset: 3px;
 }
 button:disabled { cursor: default; }
-button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-button.selected { background: #eaf0ff; border-color: var(--accent); color: #203e88; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--sheet); }
+button.selected { background: var(--sheet); border-color: var(--accent); color: var(--muted); }
 button.quiet { background: transparent; }
 h1, h2, p { overflow-wrap: anywhere; }
-a { color: #244a9d; }
+a { color: var(--muted); }
 .sh-header {
   max-width: 1040px;
   min-height: 64px;
@@ -52,19 +49,19 @@ h1[tabindex="-1"]:focus { outline: none; }
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: #fff;
+  background: var(--sheet);
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
   padding: 12px 4px;
   text-align: left;
 }
-.sh-row:hover { background: #f5f7fb; }
+.sh-row:hover { background: var(--sheet); }
 .sh-row strong { font-size: 1rem; font-weight: 600; }
 .sh-row .sh-index { width: 32px; flex-shrink: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
 .sh-row > strong { flex: 1; }
 .sh-row small { display: block; color: var(--muted); font-size: .875rem; margin-top: 4px; }
-.sh-progress { white-space: nowrap; font-size: .8125rem; color: #236345; }
+.sh-progress { white-space: nowrap; font-size: .8125rem; color: var(--ink); }
 .sh-foot { font-size: .875rem; color: var(--muted); }
 .sh-tools, .sh-secondary { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
 .sh-drill { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px 24px; }
@@ -91,21 +88,21 @@ h1[tabindex="-1"]:focus { outline: none; }
 .sh-playing-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .875rem; }
 .sh-performance .sh-score-wrap { flex: 1; min-height: 140px; }
 .sh-performance .drill-svg { max-height: 240px; height: 220px; }
-#drill-status { min-height: 2.5em; padding: 8px 12px; background: #f5f7fb; border-left: 3px solid #aab7ca; margin: 0; }
-#drill-status[data-kind="wrong"] { color: #9b2727; background: #fff0f0; border-color: #b73535; }
-#drill-status[data-kind="correct"], #drill-status[data-kind="done"] { color: #175d37; background: #edf7ef; border-color: #167143; }
+#drill-status { min-height: 2.5em; padding: 8px 12px; background: var(--sheet); border-left: 3px solid var(--paper); margin: 0; }
+#drill-status[data-kind="wrong"] { color: var(--ink); background: var(--sheet); border-color: var(--accent); }
+#drill-status[data-kind="correct"], #drill-status[data-kind="done"] { color: var(--ink); background: var(--sheet); border-color: var(--ink); }
 #drill-status[data-kind="count"] { font-size: 1.5rem; text-align: center; }
 .sh-transport, .sh-teacher { display: flex; flex-wrap: wrap; gap: 8px; }
 .sh-transport > button, .sh-teacher > button { flex: 1; }
 .sh-teacher { border-top: 1px solid var(--line); padding-top: 12px; }
-.sh-done-note { width: 100%; color: #175d37; }
+.sh-done-note { width: 100%; color: var(--ink); }
 .sh-performance > .sh-hint { margin: 0; }
 .sh-keyboard .keyboard { margin: 0; }
 .sh-keyboard .key.white { height: 100px; padding: 0 0 4px; min-width: 0; }
 .sh-keyboard .key.black { height: 60px; }
 .sh-keyboard .keyboard { max-width: 100%; }
 .sh-keyboard .octave { min-width: 0; }
-.key.white small { margin-left: 2px; color: #536173; }
+.key.white small { margin-left: 2px; color: var(--muted); }
 .sh-key-range { display: flex; gap: 8px; }
 .sh-key-range button { flex: 1; }
 .sh-clock {
@@ -117,7 +114,7 @@ h1[tabindex="-1"]:focus { outline: none; }
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: #f5f7fb;
+  background: var(--sheet);
   border-top: 1px solid var(--line);
   z-index: 30;
   font-size: .8125rem;
@@ -125,21 +122,21 @@ h1[tabindex="-1"]:focus { outline: none; }
 .sh-clock strong { font-variant-numeric: tabular-nums; }
 .sh-clock button { padding: 4px 12px; background: transparent; border: 0; }
 .sh-pity { font-size: 1.125rem; }
-.sh-pity strong { font-size: 2rem; color: #203e88; }
+.sh-pity strong { font-size: 2rem; color: var(--muted); }
 .sh-gacha-result { margin: 16px 0; min-height: 120px; border-block: 1px solid var(--line); padding: 16px 0; }
-.sh-rarity { display: block; font-size: 1.5rem; color: #3158b7; font-weight: 700; }
+.sh-rarity { display: block; font-size: 1.5rem; color: var(--muted); font-weight: 700; }
 .sh-gacha-result h2 { font-size: 1.25rem; }
 .sh-rates { display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 24px; color: var(--muted); font-size: .875rem; }
 .sh-settings-rates { display: flex; flex-wrap: wrap; gap: 12px; }
 .sh-settings-rates label { width: 100px; }
 .sh-settings-rates input { width: 100%; }
-#gacha-settings-error { color: #9b2727; }
+#gacha-settings-error { color: var(--ink); }
 #toast { bottom: calc(60px + env(safe-area-inset-bottom)); }
 dialog { max-height: calc(100svh - 32px); overflow-y: auto; }
 .settings input, .settings select { max-width: 100%; min-width: 0; }
 .settings label, .settings section, .order-row { min-width: 0; }
-.topbar { background: #fff; }
-.practice { background: #fff; }
+.topbar { background: var(--sheet); }
+.practice { background: var(--sheet); }
 .music-svg { max-width: 100%; }
 
 @media (max-width: 640px) {
@@ -235,7 +232,7 @@ dialog { max-height: calc(100svh - 32px); overflow-y: auto; }
     left: 0;
     right: 0;
     z-index: 25;
-    background: #fff;
+    background: var(--sheet);
     padding: 8px 12px;
     border-top: 1px solid var(--line);
   }
@@ -282,4 +279,33 @@ dialog { max-height: calc(100svh - 32px); overflow-y: auto; }
   .sh-gacha-tools { grid-column: 2; grid-row: 2 / 5; }
   .sh-gacha-tools p { margin: 0 0 4px; }
   .sh-rates { padding-top: 8px; }
+}
+
+/* Practice pages read as open pages, with rules instead of cards. */
+:root { background: var(--paper); }
+.sh-header { border-bottom: var(--rule); }
+.sh-main h1 { font-size: 28px; font-weight: 800; }
+.sh-score-wrap { border: 0; background: var(--sheet); }
+.sh-clock { background: var(--paper); border-top: var(--rule); font-variant-numeric: tabular-nums; }
+.sh-clock button { box-shadow: none; }
+.sh-rarity { color: var(--accent); font-size: 36px; font-weight: 800; line-height: 1.2; }
+.sh-pity strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.sh-gacha-result { border-radius: 0; box-shadow: none; text-align: left; }
+#drill-status { background: transparent; border: 0; padding-inline: 0; }
+.sh-row { background: transparent; border-bottom: var(--rule); box-shadow: none; }
+.sh-row:hover { background: var(--sheet); }
+.sh-keyboard .key.black { min-height: 44px; }
+body { background: var(--paper); }
+button { border: var(--rule); border-radius: var(--button-radius); box-shadow: var(--button-shadow); }
+button:active { transform: translateY(4px); box-shadow: none; }
+button.primary { background: var(--action-red); color: white; border-color: var(--ink); }
+button.selected { background: var(--ink); color: var(--sheet); }
+.sh-clock button, button.quiet { box-shadow: none; }
+.key.white { background: var(--sheet); border-color: var(--ink); box-shadow: none; }
+.key.black { background: var(--ink); color: var(--sheet); border-color: var(--ink); box-shadow: none; }
+@media (orientation: portrait) {
+  .sh-drill .drill-svg.sh-wrapped-score { max-height: 260px; }
+}
+@media (max-width: 350px) {
+  .sh-drill .drill-svg.sh-wrapped-score { max-height: 180px; }
 }
